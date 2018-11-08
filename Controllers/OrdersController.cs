@@ -16,14 +16,14 @@ namespace WebApplicationExercise.Controllers
         private CustomerManager _customerManager = new CustomerManager();
 
         [HttpGet]
-        [Route("getOrder")]
+        [Route("order")]
         public Order GetOrder(Guid orderId)
         {
             return _dataContext.Orders.Include(o => o.Products).Single(o => o.Id == orderId);
         }
 
         [HttpGet]
-        [Route("getOrders")]
+        [Route("orders")]
         public IEnumerable<Order> GetOrders(DateTime? from = null, DateTime? to = null, string customerName = null)
         {
             IEnumerable<Order> orders = _dataContext.Orders.Include(o => o.Products);
@@ -42,7 +42,7 @@ namespace WebApplicationExercise.Controllers
         }
 
         [HttpPost]
-        [Route("saveOrder")]
+        [Route("order")]
         public void SaveOrder([FromBody]Order order)
         {
             _dataContext.Orders.Add(order);
