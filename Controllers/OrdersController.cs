@@ -6,6 +6,7 @@ using System.Web.Http;
 using WebApplicationExercise.Core;
 using WebApplicationExercise.Models;
 using System.Data.Entity;
+using System.Threading.Tasks;
 
 namespace WebApplicationExercise.Controllers
 {
@@ -43,10 +44,17 @@ namespace WebApplicationExercise.Controllers
 
         [HttpPost]
         [Route("order")]
-        public void SaveOrder([FromBody]Order order)
+        public async Task<IHttpActionResult> SaveOrder([FromBody]Order order)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             _dataContext.Orders.Add(order);
-            _dataContext.SaveChanges();
+            await _dataContext.SaveChangesAsync();
+
+            return Ok(order);
         }
 
         private IEnumerable<Order> FilterByCustomer(IEnumerable<Order> orders, string customerName)
