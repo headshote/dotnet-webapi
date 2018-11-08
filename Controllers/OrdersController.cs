@@ -57,6 +57,15 @@ namespace WebApplicationExercise.Controllers
             return Ok(order);
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _dataContext.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
         private IEnumerable<Order> FilterByCustomer(IEnumerable<Order> orders, string customerName)
         {
             return orders.Where(o => o.Customer == customerName);
