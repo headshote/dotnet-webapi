@@ -137,7 +137,25 @@ namespace WebApplicationExercise.Controllers
             {
                 return BadRequest();
             }
-            
+
+            if (order.Products != null)
+            {
+                Order orderFromDb = await _dataContext.Orders
+                    .Where(o => o.Id == id)
+                    .Include(p => p.Products)
+                    .FirstAsync();
+                orderFromDb.Products.RemoveRange(0, orderFromDb.Products.Count);
+
+                foreach (var p in order.Products)
+                {
+                    orderFromDb.Products.Add(p);
+                }
+                orderFromDb.CreatedDate = order.CreatedDate;
+                orderFromDb.Customer = order.Customer;
+
+                order = orderFromDb;
+            }
+
             _dataContext.Set<Order>().AddOrUpdate(order);
 
             try
