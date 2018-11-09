@@ -194,8 +194,8 @@ namespace WebApplicationExercise.Controllers
         public async Task<IHttpActionResult> DeleteOrder(Guid id)
         {
             Order order = await _dataContext.Orders
-                .Where(x => x.Id == id)
-                .Include(s => s.Products)
+                .Where(o => o.Id == id)
+                .Include(p => p.Products)
                 .FirstAsync();
 
             if (order == null)
@@ -204,9 +204,9 @@ namespace WebApplicationExercise.Controllers
             }
 
             _dataContext.Orders.Remove(order);
-            foreach (var s in order.Products.ToList())
+            foreach (var product in order.Products)
             {
-                _dataContext.Products.Remove(s);
+                _dataContext.Products.Remove(product);
             }
 
             await _dataContext.SaveChangesAsync();
