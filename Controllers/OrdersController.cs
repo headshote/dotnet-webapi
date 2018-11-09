@@ -98,13 +98,22 @@ namespace WebApplicationExercise.Controllers
         // DELETE: api/Orders/5
         public async Task<IHttpActionResult> DeleteOrder(Guid id)
         {
-            Order order = await _dataContext.Orders.FindAsync(id);
+            Order order = await _dataContext.Orders
+                .Where(x => x.Id == id)
+                .Include(s => s.Products)
+                .FirstAsync();
+
             if (order == null)
             {
                 return NotFound();
             }
 
             _dataContext.Orders.Remove(order);
+            foreach (var s in order.Products.ToList())
+            {
+                _dataContext.Products.Remove(s);
+            }
+
             await _dataContext.SaveChangesAsync();
 
             return Ok(order);
