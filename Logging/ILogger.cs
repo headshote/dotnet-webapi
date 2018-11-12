@@ -18,9 +18,5 @@ namespace WebApplicationExercise.Logging
         void Error(string message);
         void Error(string fmt, params object[] vars);
         void Error(Exception exception, string fmt, params object[] vars);
-
-        void TraceApi(string controllerName, string method, TimeSpan timespan);
-        void TraceApi(string controllerName, string method, TimeSpan timespan, string extraInfo);
-        void TraceApi(string controllerName, string method, TimeSpan timespan, string fmt, params object[] vars);
     }
 }

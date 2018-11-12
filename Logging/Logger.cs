@@ -55,22 +55,6 @@ namespace WebApplicationExercise.Logging
             Error(FormatExceptionMessage(exception, fmt, vars));
         }
 
-        public void TraceApi(string controllerName, string method, TimeSpan timespan, string extraInfo)
-        {
-            string message = String.Concat("Controller:", controllerName, ". Method:", method, ". Timespan:", timespan.ToString(), ". ", extraInfo);
-            log.Info(message);
-        }
-
-        public void TraceApi(string controllerName, string method, TimeSpan timespan)
-        {
-            TraceApi(controllerName, method, timespan, "");
-        }
-
-        public void TraceApi(string controllerName, string method, TimeSpan timespan, string fmt, params object[] vars)
-        {
-            TraceApi(controllerName, method, timespan, string.Format(fmt, vars));
-        }
-
         private static string FormatExceptionMessage(Exception exception, string fmt, object[] vars)
         {
             var sb = new StringBuilder();

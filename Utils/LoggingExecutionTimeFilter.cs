@@ -30,7 +30,7 @@ namespace WebApplicationExercise.Utils
 
             var controlleName = actionExecutedContext.ActionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
             var methodName = actionExecutedContext.ActionContext.ActionDescriptor.ActionName;
-            _logger.TraceApi(controlleName, methodName, _stopwatch.Elapsed, "Execution finished.");
+            _logger.Information("Method {0} of the controller {1} finished execution after running for {2}.", methodName, controlleName, _stopwatch.Elapsed);
         }
     }
 }
