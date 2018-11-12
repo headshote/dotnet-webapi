@@ -145,6 +145,11 @@ namespace WebApplicationExercise.Controllers
                 return BadRequest();
             }
 
+            if (!OrderExists(id))
+            {
+                return NotFound();
+            }
+
             if (order.Products != null)
             {
                 Order orderFromDb = await _dataContext.Orders
@@ -171,15 +176,8 @@ namespace WebApplicationExercise.Controllers
             }
             catch (DbUpdateConcurrencyException exception)
             {
-                if (!OrderExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    _logger.Error("Exception {0} occured. Message: {1}, StackTrace: {2}", exception, exception.Message, exception.StackTrace);
-                    throw;
-                }
+                _logger.Error("Exception {0} occured. Message: {1}, StackTrace: {2}", exception, exception.Message, exception.StackTrace);
+                throw;
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -205,7 +203,7 @@ namespace WebApplicationExercise.Controllers
             Order order = await _dataContext.Orders
                 .Where(o => o.Id == id)
                 .Include(p => p.Products)
-                .FirstAsync();
+                .FirstOrDefaultAsync();
 
             if (order == null)
             {
