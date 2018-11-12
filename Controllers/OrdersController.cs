@@ -98,7 +98,16 @@ namespace WebApplicationExercise.Controllers
             }
 
             _dataContext.Orders.Add(order);
-            await _dataContext.SaveChangesAsync();
+
+            try
+            {
+                await _dataContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException exception)
+            {
+                _logger.Error(exception, "During POST request.");
+                throw;
+            }
 
             return Ok(order);
         }
@@ -174,9 +183,9 @@ namespace WebApplicationExercise.Controllers
             {
                 await _dataContext.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException exception)
+            catch (DbUpdateException exception)
             {
-                _logger.Error("Exception {0} occured. Message: {1}, StackTrace: {2}", exception, exception.Message, exception.StackTrace);
+                _logger.Error(exception, "During PUT request.");
                 throw;
             }
 
@@ -197,6 +206,7 @@ namespace WebApplicationExercise.Controllers
         /// <returns>The deleted Order</returns>
         /// <response code="201">Returns the deleted order</response>
         /// <response code="404">Not found if the order doen't exist</response>
+        [HttpDelete]
         [LoggingExecutionTimeFilter]
         public async Task<IHttpActionResult> DeleteOrder(Guid id)
         {
@@ -216,7 +226,15 @@ namespace WebApplicationExercise.Controllers
                 _dataContext.Products.Remove(product);
             }
 
-            await _dataContext.SaveChangesAsync();
+            try
+            {
+                await _dataContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException exception)
+            {
+                _logger.Error(exception, "During DELETE request.");
+                throw;
+            }
 
             return Ok(order);
         }
