@@ -18,9 +18,9 @@ namespace WebApplicationExercise.Controllers
     [RoutePrefix("api/orders")]
     public class OrdersController : ApiController
     {
-        private MainDataContext _dataContext = new MainDataContext();
-        private CustomerManager _customerManager = new CustomerManager();
-        private ILogger _logger = new Logger();
+        private readonly MainDataContext _dataContext = new MainDataContext();
+        private readonly CustomerManager _customerManager = new CustomerManager();
+        private readonly ILogger _logger = new Logger(); 
 
         // GET: api/Orders/5
         /// <summary>
