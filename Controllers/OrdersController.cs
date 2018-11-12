@@ -30,9 +30,16 @@ namespace WebApplicationExercise.Controllers
         /// <returns>An Order, which mathecs the id</returns>
         [HttpGet]
         [LoggingExecutionTimeFilter]
-        public Order GetOrder(Guid id)
+        public async Task<IHttpActionResult> GetOrder(Guid id)
         {
-            return _dataContext.Orders.Include(o => o.Products).Single(o => o.Id == id);
+            var order = await _dataContext.Orders.Include(o => o.Products).FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(order);
         }
 
         // GET: api/Orders
@@ -45,9 +52,9 @@ namespace WebApplicationExercise.Controllers
         /// <returns>a list of Orders, which match the filtering criteria</returns>
         [HttpGet]
         [LoggingExecutionTimeFilter]
-        public IEnumerable<Order> GetOrders(DateTime? from = null, DateTime? to = null, string customerName = null)
+        public async Task<IEnumerable<Order>> GetOrders(DateTime? from = null, DateTime? to = null, string customerName = null)
         {
-            IEnumerable<Order> orders = _dataContext.Orders.Include(o => o.Products);
+            IEnumerable<Order> orders = await _dataContext.Orders.Include(o => o.Products).ToListAsync();
 
             if (from != null && to != null)
             {
