@@ -54,7 +54,8 @@ namespace WebApplicationExercise.Controllers
         [LoggingExecutionTimeFilter]
         public async Task<IEnumerable<Order>> GetOrders(DateTime? from = null, DateTime? to = null, string customerName = null)
         {
-            IEnumerable<Order> orders = await _dataContext.Orders.Include(o => o.Products).ToListAsync();
+            var orders = _dataContext.Orders
+                         .Include(o => o.Products);
 
             if (from != null && to != null)
             {
@@ -66,7 +67,9 @@ namespace WebApplicationExercise.Controllers
                 orders = FilterByCustomer(orders, customerName);
             }
 
-            return orders.Where(o => _customerManager.IsCustomerVisible(o.Customer));
+            var ordersList = await orders.ToListAsync();            
+
+            return ordersList.Where(o => _customerManager.IsCustomerVisible(o.Customer));
         }
 
         // POST: api/Orders/5
@@ -255,12 +258,12 @@ namespace WebApplicationExercise.Controllers
             base.Dispose(disposing);
         }
 
-        private IEnumerable<Order> FilterByCustomer(IEnumerable<Order> orders, string customerName)
+        private IQueryable<Order> FilterByCustomer(IQueryable<Order> orders, string customerName)
         {
             return orders.Where(o => o.Customer == customerName);
         }
 
-        private IEnumerable<Order> FilterByDate(IEnumerable<Order> orders, DateTime from, DateTime to)
+        private IQueryable<Order> FilterByDate(IQueryable<Order> orders, DateTime from, DateTime to)
         {
             return orders.Where(o => o.CreatedDate >= from && o.CreatedDate < to);
         }
