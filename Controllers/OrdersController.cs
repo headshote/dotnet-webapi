@@ -10,6 +10,7 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
 using System.Net;
 using System.Threading.Tasks;
+using WebApplicationExercise.Utils;
 
 namespace WebApplicationExercise.Controllers
 {
@@ -26,6 +27,7 @@ namespace WebApplicationExercise.Controllers
         /// <param name="id">Guid of the order</param>
         /// <returns>An Order, which mathecs the id</returns>
         [HttpGet]
+        [LoggingExecutionTimeFilter]
         public Order GetOrder(Guid id)
         {
             return _dataContext.Orders.Include(o => o.Products).Single(o => o.Id == id);
@@ -40,6 +42,7 @@ namespace WebApplicationExercise.Controllers
         /// <param name="customerName">Name of the customer n the order</param>
         /// <returns>a list of Orders, which match the filtering criteria</returns>
         [HttpGet]
+        [LoggingExecutionTimeFilter]
         public IEnumerable<Order> GetOrders(DateTime? from = null, DateTime? to = null, string customerName = null)
         {
             IEnumerable<Order> orders = _dataContext.Orders.Include(o => o.Products);
@@ -84,6 +87,7 @@ namespace WebApplicationExercise.Controllers
         /// <response code="201">Returns the newly created order</response>
         /// <response code="400">Bad request if input model is invalid</response>
         [HttpPost]
+        [LoggingExecutionTimeFilter]
         public async Task<IHttpActionResult> SaveOrder([FromBody]Order order)
         {
             if (!ModelState.IsValid)
@@ -126,6 +130,7 @@ namespace WebApplicationExercise.Controllers
         /// <response code="404">If the order doen's exist</response>
         /// <response code="400">Bad request if input model is not valid</response>
         [HttpPut]
+        [LoggingExecutionTimeFilter]
         public async Task<IHttpActionResult> UpdateOrder(Guid id, Order order)
         {
             if (!ModelState.IsValid)
@@ -191,6 +196,7 @@ namespace WebApplicationExercise.Controllers
         /// <returns>The deleted Order</returns>
         /// <response code="201">Returns the deleted order</response>
         /// <response code="404">Not found if the order doen't exist</response>
+        [LoggingExecutionTimeFilter]
         public async Task<IHttpActionResult> DeleteOrder(Guid id)
         {
             Order order = await _dataContext.Orders
