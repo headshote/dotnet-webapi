@@ -10,6 +10,7 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
 using System.Net;
 using System.Threading.Tasks;
+using WebApplicationExercise.Logging;
 using WebApplicationExercise.Utils;
 
 namespace WebApplicationExercise.Controllers
@@ -19,6 +20,7 @@ namespace WebApplicationExercise.Controllers
     {
         private MainDataContext _dataContext = new MainDataContext();
         private CustomerManager _customerManager = new CustomerManager();
+        private ILogger _logger = new Logger();
 
         // GET: api/Orders/5
         /// <summary>
@@ -167,7 +169,7 @@ namespace WebApplicationExercise.Controllers
             {
                 await _dataContext.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException exception)
             {
                 if (!OrderExists(id))
                 {
@@ -175,6 +177,7 @@ namespace WebApplicationExercise.Controllers
                 }
                 else
                 {
+                    _logger.Error("Exception {0} occured. Message: {1}, StackTrace: {2}", exception, exception.Message, exception.StackTrace);
                     throw;
                 }
             }

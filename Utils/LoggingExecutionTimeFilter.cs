@@ -13,16 +13,11 @@ namespace WebApplicationExercise.Utils
     public class LoggingExecutionTimeFilter : ActionFilterAttribute, IActionFilter
     {
         private readonly ILogger _logger = new Logger();
-        private readonly Stopwatch _stopwatch;
-
-        public LoggingExecutionTimeFilter()
-        {
-            _stopwatch = new Stopwatch();
-        }
+        private readonly Stopwatch _stopwatch = new Stopwatch();
 
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
-            _stopwatch.Start();
+            _stopwatch.Restart();
 
             var controlleName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
             var methodName = actionContext.ActionDescriptor.ActionName;
