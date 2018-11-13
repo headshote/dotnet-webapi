@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Filters;
+using AutoMapper;
 using Unity;
 using Unity.Lifetime;
 using WebApplicationExercise.Core;
+using WebApplicationExercise.DTO;
 using WebApplicationExercise.Logging;
+using WebApplicationExercise.Models;
 using WebApplicationExercise.Resolver;
 using WebApplicationExercise.Utils;
 
@@ -28,6 +31,12 @@ namespace WebApplicationExercise
             container.RegisterType<ILogger, Logger>(new HierarchicalLifetimeManager());
             container.RegisterType<MainDataContext, MainDataContext>(new HierarchicalLifetimeManager());
             config.DependencyResolver = new UnityResolver(container);
+
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<Order, OrderDTO>();
+                cfg.CreateMap<Product, ProductDTO>();
+            });
 
             // Web API routes
             config.MapHttpAttributeRoutes();

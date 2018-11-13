@@ -10,6 +10,9 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web.Http.Description;
+using AutoMapper;
+using WebApplicationExercise.DTO;
 using WebApplicationExercise.Logging;
 using WebApplicationExercise.Utils;
 
@@ -39,6 +42,7 @@ namespace WebApplicationExercise.Controllers
         /// <returns>An Order, which mathecs the id</returns>
         [HttpGet]
         [LoggingExecutionTimeFilter]
+        [ResponseType(typeof(OrderDTO))]
         public async Task<IHttpActionResult> GetOrder(Guid id)
         {
             var order = await _dataContext.Orders.Include(o => o.Products).FirstOrDefaultAsync(o => o.Id == id);
@@ -48,7 +52,7 @@ namespace WebApplicationExercise.Controllers
                 return NotFound();
             }
 
-            return Ok(order);
+            return Ok(Mapper.Map<OrderDTO>(order));
         }
 
         // GET: api/Orders
@@ -61,7 +65,7 @@ namespace WebApplicationExercise.Controllers
         /// <returns>a list of Orders, which match the filtering criteria</returns>
         [HttpGet]
         [LoggingExecutionTimeFilter]
-        public async Task<IEnumerable<Order>> GetOrders(DateTime? from = null, DateTime? to = null, string customerName = null)
+        public async Task<IEnumerable<OrderDTO>> GetOrders(DateTime? from = null, DateTime? to = null, string customerName = null)
         {
             var orders = _dataContext.Orders
                          .Include(o => o.Products);
@@ -76,9 +80,10 @@ namespace WebApplicationExercise.Controllers
                 orders = FilterByCustomer(orders, customerName);
             }
 
-            var ordersList = await orders.ToListAsync();            
+            var ordersList = await orders.ToListAsync();
+            ordersList = ordersList.Where(o => _customerManager.IsCustomerVisible(o.Customer)).ToList();
 
-            return ordersList.Where(o => _customerManager.IsCustomerVisible(o.Customer));
+            return Mapper.Map<List<Order>, List<OrderDTO>>(ordersList);
         }
 
         // POST: api/Orders/5
@@ -109,14 +114,15 @@ namespace WebApplicationExercise.Controllers
         /// <response code="400">Bad request if input model is invalid</response>
         [HttpPost]
         [LoggingExecutionTimeFilter]
-        public async Task<IHttpActionResult> SaveOrder([FromBody]Order order)
+        public async Task<IHttpActionResult> SaveOrder([FromBody]OrderDTO order)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _dataContext.Orders.Add(order);
+            var orderItem = Mapper.Map<Order>(order);
+            _dataContext.Orders.Add(orderItem);
 
             try
             {
@@ -161,7 +167,7 @@ namespace WebApplicationExercise.Controllers
         /// <response code="400">Bad request if input model is not valid</response>
         [HttpPut]
         [LoggingExecutionTimeFilter]
-        public async Task<IHttpActionResult> UpdateOrder(Guid id, Order order)
+        public async Task<IHttpActionResult> UpdateOrder(Guid id, OrderDTO order)
         {
             if (!ModelState.IsValid)
             {
@@ -178,7 +184,9 @@ namespace WebApplicationExercise.Controllers
                 return NotFound();
             }
 
-            if (order.Products != null)
+            var orderItem = Mapper.Map<Order>(order);
+            
+            if (orderItem.Products != null)
             {
                 Order orderFromDb = await _dataContext.Orders
                     .Where(o => o.Id == id)
@@ -186,17 +194,17 @@ namespace WebApplicationExercise.Controllers
                     .FirstAsync();
                 orderFromDb.Products.RemoveRange(0, orderFromDb.Products.Count);
 
-                foreach (var p in order.Products)
+                foreach (var p in orderItem.Products)
                 {
                     orderFromDb.Products.Add(p);
                 }
-                orderFromDb.CreatedDate = order.CreatedDate;
-                orderFromDb.Customer = order.Customer;
+                orderFromDb.CreatedDate = orderItem.CreatedDate;
+                orderFromDb.Customer = orderItem.Customer;
 
-                order = orderFromDb;
+                orderItem = orderFromDb;
             }
 
-            _dataContext.Set<Order>().AddOrUpdate(order);
+            _dataContext.Set<Order>().AddOrUpdate(orderItem);
 
             try
             {
@@ -227,6 +235,7 @@ namespace WebApplicationExercise.Controllers
         /// <response code="404">Not found if the order doen't exist</response>
         [HttpDelete]
         [LoggingExecutionTimeFilter]
+        [ResponseType(typeof(OrderDTO))]
         public async Task<IHttpActionResult> DeleteOrder(Guid id)
         {
             Order order = await _dataContext.Orders
@@ -255,7 +264,7 @@ namespace WebApplicationExercise.Controllers
                 throw;
             }
 
-            return Ok(order);
+            return Ok(Mapper.Map<OrderDTO>(order));
         }
 
         protected override void Dispose(bool disposing)
