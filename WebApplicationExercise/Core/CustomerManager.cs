@@ -5,7 +5,7 @@ using System.Web;
 
 namespace WebApplicationExercise.Core
 {
-    public class CustomerManager
+    public class CustomerManager : ICustomerManager
     {
         public bool IsCustomerVisible(string customerName)
         {
