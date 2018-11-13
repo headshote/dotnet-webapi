@@ -6,13 +6,16 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using Unity.Attributes;
 using WebApplicationExercise.Logging;
 
 namespace WebApplicationExercise.Utils
 {
     public class LoggingExecutionTimeFilter : ActionFilterAttribute, IActionFilter
     {
-        private readonly ILogger _logger = new Logger();
+        [Dependency]
+        public ILogger Logger { get; set; }
+
         private readonly Stopwatch _stopwatch = new Stopwatch();
 
         public override void OnActionExecuting(HttpActionContext actionContext)
@@ -21,7 +24,7 @@ namespace WebApplicationExercise.Utils
 
             var controlleName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
             var methodName = actionContext.ActionDescriptor.ActionName;
-            _logger.Information("Method {0} of the controller {1} started execution.", methodName, controlleName);
+            Logger.Information("Method {0} of the controller {1} started execution.", methodName, controlleName);
         }
 
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
@@ -30,7 +33,7 @@ namespace WebApplicationExercise.Utils
 
             var controlleName = actionExecutedContext.ActionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
             var methodName = actionExecutedContext.ActionContext.ActionDescriptor.ActionName;
-            _logger.Information("Method {0} of the controller {1} finished execution after running for {2}.", methodName, controlleName, _stopwatch.Elapsed);
+            Logger.Information("Method {0} of the controller {1} finished execution after running for {2}.", methodName, controlleName, _stopwatch.Elapsed);
         }
     }
 }

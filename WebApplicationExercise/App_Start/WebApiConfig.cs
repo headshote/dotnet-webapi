@@ -18,6 +18,12 @@ namespace WebApplicationExercise
         {
             // Web API configuration and services
             var container = new UnityContainer();
+
+            var providers = config.Services.GetFilterProviders().ToList();
+            config.Services.Add(typeof(IFilterProvider), new UnityFilterProvider(container));
+            var defaultprovider = providers.Single(i => i is ActionDescriptorFilterProvider);
+            config.Services.Remove(typeof(IFilterProvider), defaultprovider);
+
             container.RegisterType<ICustomerManager, CustomerManager>(new HierarchicalLifetimeManager());
             container.RegisterType<ILogger, Logger>(new HierarchicalLifetimeManager());
             container.RegisterType<MainDataContext, MainDataContext>(new HierarchicalLifetimeManager());
