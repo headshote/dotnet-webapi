@@ -36,6 +36,8 @@ namespace WebApplicationExercise
             {
                 cfg.CreateMap<Order, OrderDTO>();
                 cfg.CreateMap<Product, ProductDTO>();
+                    //.ForMember(dest => dest.Id, opts => opts.Ignore())
+                    //.ForMember(dest => dest.Name, opts => opts.MapFrom(src => src.Name));
             });
 
             // Web API routes
