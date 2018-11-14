@@ -30,6 +30,7 @@ namespace WebApplicationExercise.Web
 
             container.RegisterType<ICustomerManager, CustomerManager>(new HierarchicalLifetimeManager());
             container.RegisterType<ILogger, Logger>(new HierarchicalLifetimeManager());
+            container.RegisterType<IOrdersRepository, OrdersRepository>(new HierarchicalLifetimeManager());
             container.RegisterType<MainDataContext, MainDataContext>(new HierarchicalLifetimeManager());
             config.DependencyResolver = new UnityResolver(container);
 

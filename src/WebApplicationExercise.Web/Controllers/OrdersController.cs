@@ -12,7 +12,6 @@ using System.Web.Http.Description;
 using AutoMapper;
 using WebApplicationExercise.Core.Interfaces;
 using WebApplicationExercise.Core.Models;
-using WebApplicationExercise.Infrastructure.Data;
 using WebApplicationExercise.Web.DTO;
 using WebApplicationExercise.Web.Filters;
 
@@ -21,17 +20,14 @@ namespace WebApplicationExercise.Web.Controllers
     [RoutePrefix("api/orders")]
     public class OrdersController : ApiController
     {
-        private readonly MainDataContext _dataContext;
         private readonly ICustomerManager _customerManager;
-        private readonly ILogger _logger;
+        private readonly IOrdersRepository _ordersRepository;
 
-        public OrdersController(MainDataContext dataContext,
-            ICustomerManager customerManager,
-            ILogger logger)
+        public OrdersController(ICustomerManager customerManager,
+            IOrdersRepository ordersRepository)
         {
-            _dataContext = dataContext;
             _customerManager = customerManager;
-            _logger = logger;
+            _ordersRepository = ordersRepository;
         }
 
         // GET: api/Orders/5
@@ -45,7 +41,7 @@ namespace WebApplicationExercise.Web.Controllers
         [ResponseType(typeof(OrderDTO))]
         public async Task<IHttpActionResult> GetOrder(Guid id)
         {
-            var order = await _dataContext.Orders.Include(o => o.Products).FirstOrDefaultAsync(o => o.Id == id);
+            var order = await _ordersRepository.GetById(id);
 
             if (order == null)
             {
@@ -67,20 +63,8 @@ namespace WebApplicationExercise.Web.Controllers
         [LoggingExecutionTimeFilter]
         public async Task<IEnumerable<OrderDTO>> GetOrders(DateTime? from = null, DateTime? to = null, string customerName = null)
         {
-            var orders = _dataContext.Orders
-                         .Include(o => o.Products);
+            var ordersList = await _ordersRepository.List(from, to, customerName);
 
-            if (from != null && to != null)
-            {
-                orders = FilterByDate(orders, from.Value, to.Value);
-            }
-
-            if (customerName != null)
-            {
-                orders = FilterByCustomer(orders, customerName);
-            }
-
-            var ordersList = await orders.ToListAsync();
             ordersList = ordersList.Where(o => _customerManager.IsCustomerVisible(o.Customer)).ToList();
 
             return Mapper.Map<List<Order>, List<OrderDTO>>(ordersList);
@@ -121,20 +105,7 @@ namespace WebApplicationExercise.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var orderItem = Mapper.Map<Order>(order);
-            _dataContext.Orders.Add(orderItem);
-
-            try
-            {
-                await _dataContext.SaveChangesAsync();
-            }
-            catch (DbUpdateException exception)
-            {
-                _logger.Error(exception, "During POST request.");
-                throw;
-            }
-
-            return Ok(order);
+            return Ok(await _ordersRepository.Add(Mapper.Map<Order>(order)));
         }
 
         // PUT: api/Orders/5
@@ -179,41 +150,9 @@ namespace WebApplicationExercise.Web.Controllers
                 return BadRequest();
             }
 
-            if (!OrderExists(id))
+            if (!await _ordersRepository.Update(Mapper.Map<Order>(order)))
             {
                 return NotFound();
-            }
-
-            var orderItem = Mapper.Map<Order>(order);
-            
-            if (orderItem.Products != null)
-            {
-                Order orderFromDb = await _dataContext.Orders
-                    .Where(o => o.Id == id)
-                    .Include(p => p.Products)
-                    .FirstAsync();
-                orderFromDb.Products.RemoveRange(0, orderFromDb.Products.Count);
-
-                foreach (var p in orderItem.Products)
-                {
-                    orderFromDb.Products.Add(p);
-                }
-                orderFromDb.CreatedDate = orderItem.CreatedDate;
-                orderFromDb.Customer = orderItem.Customer;
-
-                orderItem = orderFromDb;
-            }
-
-            _dataContext.Set<Order>().AddOrUpdate(orderItem);
-
-            try
-            {
-                await _dataContext.SaveChangesAsync();
-            }
-            catch (DbUpdateException exception)
-            {
-                _logger.Error(exception, "During PUT request.");
-                throw;
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -238,57 +177,13 @@ namespace WebApplicationExercise.Web.Controllers
         [ResponseType(typeof(OrderDTO))]
         public async Task<IHttpActionResult> DeleteOrder(Guid id)
         {
-            Order order = await _dataContext.Orders
-                .Where(o => o.Id == id)
-                .Include(p => p.Products)
-                .FirstOrDefaultAsync();
-
+            var order = await _ordersRepository.Delete(id);
             if (order == null)
             {
                 return NotFound();
             }
 
-            _dataContext.Orders.Remove(order);
-            foreach (var product in order.Products)
-            {
-                _dataContext.Products.Remove(product);
-            }
-
-            try
-            {
-                await _dataContext.SaveChangesAsync();
-            }
-            catch (DbUpdateException exception)
-            {
-                _logger.Error(exception, "During DELETE request.");
-                throw;
-            }
-
             return Ok(Mapper.Map<OrderDTO>(order));
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _dataContext.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        private IQueryable<Order> FilterByCustomer(IQueryable<Order> orders, string customerName)
-        {
-            return orders.Where(o => o.Customer == customerName);
-        }
-
-        private IQueryable<Order> FilterByDate(IQueryable<Order> orders, DateTime from, DateTime to)
-        {
-            return orders.Where(o => o.CreatedDate >= from && o.CreatedDate < to);
-        }
-
-        private bool OrderExists(Guid id)
-        {
-            return _dataContext.Orders.Count(e => e.Id == id) > 0;
         }
     }
 }

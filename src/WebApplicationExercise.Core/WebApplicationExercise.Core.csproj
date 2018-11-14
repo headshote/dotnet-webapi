@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Interfaces\ICustomerManager.cs" />
     <Compile Include="Interfaces\ILogger.cs" />
+    <Compile Include="Interfaces\IOrdersRepository.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Managers\CustomerManager.cs" />
     <Compile Include="Models\Order.cs" />
