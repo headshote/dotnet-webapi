@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
-using WebApplicationExercise.Core;
-using WebApplicationExercise.Models;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
@@ -12,11 +10,13 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http.Description;
 using AutoMapper;
-using WebApplicationExercise.DTO;
-using WebApplicationExercise.Logging;
-using WebApplicationExercise.Utils;
+using WebApplicationExercise.Core.Interfaces;
+using WebApplicationExercise.Core.Models;
+using WebApplicationExercise.Infrastructure.Data;
+using WebApplicationExercise.Web.DTO;
+using WebApplicationExercise.Web.Filters;
 
-namespace WebApplicationExercise.Controllers
+namespace WebApplicationExercise.Web.Controllers
 {
     [RoutePrefix("api/orders")]
     public class OrdersController : ApiController

@@ -7,7 +7,7 @@ using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 using Unity;
 
-namespace WebApplicationExercise.Resolver
+namespace WebApplicationExercise.Web.Resolver
 {
     public class UnityFilterProvider : IFilterProvider
     {

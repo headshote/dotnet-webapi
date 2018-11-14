@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
+﻿using System.Diagnostics;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 using Unity.Attributes;
-using WebApplicationExercise.Logging;
+using WebApplicationExercise.Core.Interfaces;
 
-namespace WebApplicationExercise.Utils
+namespace WebApplicationExercise.Web.Filters
 {
     public class LoggingExecutionTimeFilter : ActionFilterAttribute, IActionFilter
     {

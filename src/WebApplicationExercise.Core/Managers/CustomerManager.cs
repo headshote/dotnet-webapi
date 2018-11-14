@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using WebApplicationExercise.Core.Interfaces;
 
-namespace WebApplicationExercise.Core
+namespace WebApplicationExercise.Core.Managers
 {
     public class CustomerManager : ICustomerManager
     {

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using WebApplicationExercise.Core.Interfaces;
 
-namespace WebApplicationExercise.Logging
+namespace WebApplicationExercise.Core.Logging
 {
     public class Logger : ILogger
     {

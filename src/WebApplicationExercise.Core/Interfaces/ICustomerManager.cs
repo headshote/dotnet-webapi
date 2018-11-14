@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebApplicationExercise.Core
+namespace WebApplicationExercise.Core.Interfaces
 {
     public interface ICustomerManager
     {

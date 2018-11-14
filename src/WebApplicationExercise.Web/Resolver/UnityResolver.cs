@@ -6,7 +6,7 @@ using System.Web.Http.Dependencies;
 using Unity;
 using Unity.Exceptions;
 
-namespace WebApplicationExercise.Resolver
+namespace WebApplicationExercise.Web.Resolver
 {
     public class UnityResolver : IDependencyResolver
     {

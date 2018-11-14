@@ -6,14 +6,15 @@ using System.Web.Http.Filters;
 using AutoMapper;
 using Unity;
 using Unity.Lifetime;
-using WebApplicationExercise.Core;
-using WebApplicationExercise.DTO;
-using WebApplicationExercise.Logging;
-using WebApplicationExercise.Models;
-using WebApplicationExercise.Resolver;
-using WebApplicationExercise.Utils;
+using WebApplicationExercise.Core.Interfaces;
+using WebApplicationExercise.Core.Logging;
+using WebApplicationExercise.Core.Managers;
+using WebApplicationExercise.Core.Models;
+using WebApplicationExercise.Infrastructure.Data;
+using WebApplicationExercise.Web.DTO;
+using WebApplicationExercise.Web.Resolver;
 
-namespace WebApplicationExercise
+namespace WebApplicationExercise.Web
 {
     public static class WebApiConfig
     {
