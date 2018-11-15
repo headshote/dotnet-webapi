@@ -26,12 +26,13 @@ namespace WebApplicationExercise.Infrastructure.Data
 
         public Task<Order> GetById(Guid id)
         {
-            return _dataContext.Orders.Include(o => o.Products).FirstOrDefaultAsync(o => o.Id == id);
+            return _dataContext.Orders.AsNoTracking().Include(o => o.Products).FirstOrDefaultAsync(o => o.Id == id);
         }
 
         public Task<List<Order>> List(DateTime? from = null, DateTime? to = null, string customerName = null)
         {
             var orders = _dataContext.Orders
+                .AsNoTracking()
                 .Include(o => o.Products);
 
             if (from != null && to != null)
