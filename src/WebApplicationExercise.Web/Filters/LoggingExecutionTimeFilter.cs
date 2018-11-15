@@ -12,11 +12,11 @@ namespace WebApplicationExercise.Web.Filters
         [Dependency]
         public ILogger Logger { get; set; }
 
-        private readonly Stopwatch _stopwatch = new Stopwatch();
-
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
-            _stopwatch.Restart();
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            actionContext.ActionArguments["stopwatch"] = stopwatch;
 
             var controlleName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
             var methodName = actionContext.ActionDescriptor.ActionName;
@@ -25,11 +25,15 @@ namespace WebApplicationExercise.Web.Filters
 
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
-            _stopwatch.Stop();
-            
+            if (!(actionExecutedContext.ActionContext.ActionArguments["stopwatch"] is Stopwatch stopwatch))
+            {
+                return;
+            }
+            stopwatch.Stop();
+
             var controlleName = actionExecutedContext.ActionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
             var methodName = actionExecutedContext.ActionContext.ActionDescriptor.ActionName;
-            ThreadPool.QueueUserWorkItem(task => Logger.Information("Method {0} of the controller {1} finished execution after running for {2}.", methodName, controlleName, _stopwatch.Elapsed));
+            ThreadPool.QueueUserWorkItem(task => Logger.Information("Method {0} of the controller {1} finished execution after running for {2}.", methodName, controlleName, stopwatch.Elapsed));
         }
     }
 }
