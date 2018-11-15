@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Threading;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 using Unity.Attributes;
@@ -19,16 +20,16 @@ namespace WebApplicationExercise.Web.Filters
 
             var controlleName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
             var methodName = actionContext.ActionDescriptor.ActionName;
-            Logger.Information("Method {0} of the controller {1} started execution.", methodName, controlleName);
+            ThreadPool.QueueUserWorkItem(task => Logger.Information("Method {0} of the controller {1} started execution.", methodName, controlleName));
         }
 
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
             _stopwatch.Stop();
-
+            
             var controlleName = actionExecutedContext.ActionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
             var methodName = actionExecutedContext.ActionContext.ActionDescriptor.ActionName;
-            Logger.Information("Method {0} of the controller {1} finished execution after running for {2}.", methodName, controlleName, _stopwatch.Elapsed);
+            ThreadPool.QueueUserWorkItem(task => Logger.Information("Method {0} of the controller {1} finished execution after running for {2}.", methodName, controlleName, _stopwatch.Elapsed));
         }
     }
 }
