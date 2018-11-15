@@ -7,10 +7,10 @@ using AutoMapper;
 using Unity;
 using Unity.Lifetime;
 using WebApplicationExercise.Core.Interfaces;
-using WebApplicationExercise.Core.Logging;
 using WebApplicationExercise.Core.Managers;
 using WebApplicationExercise.Core.Models;
 using WebApplicationExercise.Infrastructure.Data;
+using WebApplicationExercise.Infrastructure.Logging;
 using WebApplicationExercise.Web.DTO;
 using WebApplicationExercise.Web.Resolver;
 
@@ -21,6 +21,8 @@ namespace WebApplicationExercise.Web
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+            log4net.Config.XmlConfigurator.Configure();
+
             var container = new UnityContainer();
 
             var providers = config.Services.GetFilterProviders().ToList();
