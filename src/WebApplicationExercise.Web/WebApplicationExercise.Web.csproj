@@ -238,6 +238,7 @@
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="DTO\OrderDTO.cs" />
     <Compile Include="DTO\ProductDTO.cs" />
+    <Compile Include="Filters\ControllerExceptionFilterAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

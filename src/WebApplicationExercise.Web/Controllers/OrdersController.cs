@@ -19,6 +19,7 @@ namespace WebApplicationExercise.Web.Controllers
 {
     [RoutePrefix("api/orders")]
     [LoggingExecutionTimeFilter]
+    [ControllerExceptionFilterAttribute]
     public class OrdersController : ApiController
     {
         private readonly ICustomerManager _customerManager;

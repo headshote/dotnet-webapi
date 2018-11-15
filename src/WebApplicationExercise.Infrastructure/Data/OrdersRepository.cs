@@ -52,15 +52,7 @@ namespace WebApplicationExercise.Infrastructure.Data
         {
             _dataContext.Orders.Add(order);
 
-            try
-            {
-                await _dataContext.SaveChangesAsync();
-            }
-            catch (DbUpdateException exception)
-            {
-                _logger.Error(exception, "During POST request.");
-                throw;
-            }
+            await _dataContext.SaveChangesAsync();
 
             return order;
         }
@@ -94,15 +86,7 @@ namespace WebApplicationExercise.Infrastructure.Data
 
             _dataContext.Set<Order>().AddOrUpdate(order);
 
-            try
-            {
-                await _dataContext.SaveChangesAsync();
-            }
-            catch (DbUpdateException exception)
-            {
-                _logger.Error(exception, "During PUT request.");
-                throw;
-            }
+            await _dataContext.SaveChangesAsync();
 
             return true;
         }
@@ -122,15 +106,7 @@ namespace WebApplicationExercise.Infrastructure.Data
             _dataContext.Products.RemoveRange(order.Products);
             _dataContext.Orders.Remove(order);
 
-            try
-            {
-                await _dataContext.SaveChangesAsync();
-            }
-            catch (DbUpdateException exception)
-            {
-                _logger.Error(exception, "During DELETE request.");
-                throw;
-            }
+            await _dataContext.SaveChangesAsync();
 
             return order;
         }
