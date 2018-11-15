@@ -18,6 +18,7 @@ using WebApplicationExercise.Web.Filters;
 namespace WebApplicationExercise.Web.Controllers
 {
     [RoutePrefix("api/orders")]
+    [LoggingExecutionTimeFilter]
     public class OrdersController : ApiController
     {
         private readonly ICustomerManager _customerManager;
@@ -37,7 +38,6 @@ namespace WebApplicationExercise.Web.Controllers
         /// <param name="id">Guid of the order</param>
         /// <returns>An Order, which mathecs the id</returns>
         [HttpGet]
-        [LoggingExecutionTimeFilter]
         [ResponseType(typeof(OrderDTO))]
         public async Task<IHttpActionResult> GetOrder(Guid id)
         {
@@ -60,7 +60,7 @@ namespace WebApplicationExercise.Web.Controllers
         /// <param name="customerName">Name of the customer n the order</param>
         /// <returns>a list of Orders, which match the filtering criteria</returns>
         [HttpGet]
-        [LoggingExecutionTimeFilter]
+        [ResponseType(typeof(List<OrderDTO>))]
         public async Task<IHttpActionResult> GetOrders(DateTime? from = null, DateTime? to = null, string customerName = null)
         {
             var ordersList = await _ordersRepository.List(from, to, customerName);
@@ -97,7 +97,7 @@ namespace WebApplicationExercise.Web.Controllers
         /// <response code="201">Returns the newly created order</response>
         /// <response code="400">Bad request if input model is invalid</response>
         [HttpPost]
-        [LoggingExecutionTimeFilter]
+        [ResponseType(typeof(OrderDTO))]
         public async Task<IHttpActionResult> SaveOrder([FromBody]OrderDTO order)
         {
             if (!ModelState.IsValid)
@@ -105,7 +105,7 @@ namespace WebApplicationExercise.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            return Ok(await _ordersRepository.Add(Mapper.Map<Order>(order)));
+            return Ok(Mapper.Map<OrderDTO>(await _ordersRepository.Add(Mapper.Map<Order>(order))));
         }
 
         // PUT: api/Orders/5
@@ -137,7 +137,6 @@ namespace WebApplicationExercise.Web.Controllers
         /// <response code="404">If the order doen's exist</response>
         /// <response code="400">Bad request if input model is not valid</response>
         [HttpPut]
-        [LoggingExecutionTimeFilter]
         public async Task<IHttpActionResult> UpdateOrder(Guid id, OrderDTO order)
         {
             if (!ModelState.IsValid)
@@ -173,7 +172,6 @@ namespace WebApplicationExercise.Web.Controllers
         /// <response code="201">Returns the deleted order</response>
         /// <response code="404">Not found if the order doen't exist</response>
         [HttpDelete]
-        [LoggingExecutionTimeFilter]
         [ResponseType(typeof(OrderDTO))]
         public async Task<IHttpActionResult> DeleteOrder(Guid id)
         {
