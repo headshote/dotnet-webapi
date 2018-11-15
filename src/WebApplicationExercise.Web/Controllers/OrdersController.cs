@@ -61,13 +61,13 @@ namespace WebApplicationExercise.Web.Controllers
         /// <returns>a list of Orders, which match the filtering criteria</returns>
         [HttpGet]
         [LoggingExecutionTimeFilter]
-        public async Task<IEnumerable<OrderDTO>> GetOrders(DateTime? from = null, DateTime? to = null, string customerName = null)
+        public async Task<IHttpActionResult> GetOrders(DateTime? from = null, DateTime? to = null, string customerName = null)
         {
             var ordersList = await _ordersRepository.List(from, to, customerName);
 
             ordersList = ordersList.Where(o => _customerManager.IsCustomerVisible(o.Customer)).ToList();
 
-            return Mapper.Map<List<Order>, List<OrderDTO>>(ordersList);
+            return Ok(Mapper.Map<List<Order>, List<OrderDTO>>(ordersList));
         }
 
         // POST: api/Orders/5
