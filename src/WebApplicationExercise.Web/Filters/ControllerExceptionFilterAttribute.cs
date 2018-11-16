@@ -15,20 +15,20 @@ namespace WebApplicationExercise.Web.Filters
 
         public override void OnException(HttpActionExecutedContext context)
         {
-            if (context.Exception is NotImplementedException)
-            {
-                context.Response = new HttpResponseMessage(HttpStatusCode.NotImplemented);
-            }
-
             var controlleName = context.ActionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
             var methodName = context.ActionContext.ActionDescriptor.ActionName;
             var request = context.Request;
 
-            ThreadPool.QueueUserWorkItem(task => Logger.Information("Exception {0} occured int the method '{1}' of the controller '{2}'. Requestdata: {3}",
+            ThreadPool.QueueUserWorkItem(task => Logger.Information("Exception {0}\noccured int the method '{1}' of the controller '{2}'. Requestdata: {3}",
                 context.Exception,
                 methodName, 
                 controlleName,
                 request));
+
+            context.Response = new HttpResponseMessage(HttpStatusCode.InternalServerError)
+            {
+                Content = new StringContent("An error occurred, please try again or contact the administrator.")
+            };
         }
     }
 }
