@@ -10,6 +10,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http.Description;
 using AutoMapper;
+using Microsoft.Web.Http;
 using WebApplicationExercise.Core.Interfaces;
 using WebApplicationExercise.Core.Models;
 using WebApplicationExercise.Web.DTO;
@@ -17,6 +18,7 @@ using WebApplicationExercise.Web.Filters;
 
 namespace WebApplicationExercise.Web.Controllers
 {
+    [ApiVersion("1.0")]
     [RoutePrefix("api/orders")]
     [LoggingExecutionTimeFilter]
     [ControllerExceptionFilterAttribute]

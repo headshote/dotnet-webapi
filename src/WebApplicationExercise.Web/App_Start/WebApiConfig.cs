@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Filters;
 using AutoMapper;
+using Microsoft.Web.Http;
 using Unity;
 using Unity.Lifetime;
 using WebApplicationExercise.Core.Interfaces;
@@ -21,15 +22,20 @@ namespace WebApplicationExercise.Web
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+            config.AddApiVersioning(o =>
+            {
+                o.AssumeDefaultVersionWhenUnspecified = true;
+                o.DefaultApiVersion = new ApiVersion(1, 0);
+                o.ReportApiVersions = true;
+            });
+
             log4net.Config.XmlConfigurator.Configure();
 
             var container = new UnityContainer();
-
             var providers = config.Services.GetFilterProviders().ToList();
             config.Services.Add(typeof(IFilterProvider), new UnityFilterProvider(container));
             var defaultprovider = providers.Single(i => i is ActionDescriptorFilterProvider);
             config.Services.Remove(typeof(IFilterProvider), defaultprovider);
-
             container.RegisterType<ICustomerManager, CustomerManager>(new HierarchicalLifetimeManager());
             container.RegisterType<ILogger, Logger>(new HierarchicalLifetimeManager());
             container.RegisterType<IOrdersRepository, OrdersRepository>(new HierarchicalLifetimeManager());
