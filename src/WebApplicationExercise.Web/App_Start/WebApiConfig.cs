@@ -38,7 +38,10 @@ namespace WebApplicationExercise.Web
 
             Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Order, OrderDTO>();
+                cfg.AllowNullCollections = true;
+                cfg.AllowNullDestinationValues = true;
+                cfg.CreateMap<Order, OrderDTO>()
+                    .ForMember(dest => dest.Products, opt => opt.AllowNull());
                 cfg.CreateMap<Product, ProductDTO>();
                     //.ForMember(dest => dest.Id, opts => opts.Ignore())
                     //.ForMember(dest => dest.Name, opts => opts.MapFrom(src => src.Name));
