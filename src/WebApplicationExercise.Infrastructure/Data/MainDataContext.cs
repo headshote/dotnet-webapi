@@ -19,7 +19,7 @@ namespace WebApplicationExercise.Infrastructure.Data
 
             modelBuilder.Entity<Order>()
                 .HasMany(o => o.Products)
-                .WithOptional(p => p.Order)
+                .WithRequired(p => p.Order)
                 .WillCascadeOnDelete(true);
         }
 
