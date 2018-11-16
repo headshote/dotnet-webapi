@@ -59,32 +59,25 @@ namespace WebApplicationExercise.Infrastructure.Data
 
         public async Task<bool> Update(Order order)
         {
-            if (!OrderExists(order.Id))
+            Guid id = order.Id;
+
+            Order orderFromDb = await _dataContext.Orders
+                .Where(o => o.Id == id)
+                .Include(p => p.Products)
+                .FirstOrDefaultAsync();
+
+            if (orderFromDb == null)
             {
                 return false;
             }
 
+            _dataContext.Entry(orderFromDb).CurrentValues.SetValues(order);
             if (order.Products != null)
             {
-                Guid id = order.Id;
-
-                Order orderFromDb = await _dataContext.Orders
-                    .Where(o => o.Id == id)
-                    .Include(p => p.Products)
-                    .FirstAsync();
                 _dataContext.Products.RemoveRange(orderFromDb.Products);
-
-                foreach (var p in order.Products)
-                {
-                    orderFromDb.Products.Add(p);
-                }
-                orderFromDb.CreatedDate = order.CreatedDate;
-                orderFromDb.Customer = order.Customer;
-
-                order = orderFromDb;
+                orderFromDb.Products.AddRange(order.Products);
             }
-
-            _dataContext.Set<Order>().AddOrUpdate(order);
+            _dataContext.Set<Order>().AddOrUpdate(orderFromDb);
 
             await _dataContext.SaveChangesAsync();
 
@@ -124,11 +117,6 @@ namespace WebApplicationExercise.Infrastructure.Data
         private IQueryable<Order> FilterByDate(IQueryable<Order> orders, DateTime from, DateTime to)
         {
             return orders.Where(o => o.CreatedDate >= from && o.CreatedDate < to);
-        }
-
-        private bool OrderExists(Guid id)
-        {
-            return _dataContext.Orders.Count(e => e.Id == id) > 0;
         }
 
         ~OrdersRepository()
