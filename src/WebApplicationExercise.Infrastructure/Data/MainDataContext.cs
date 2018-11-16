@@ -16,6 +16,11 @@ namespace WebApplicationExercise.Infrastructure.Data
             modelBuilder.Entity<Product>()
                 .HasKey(p => p.Id)
                 .Property(p => p.Id).IsRequired().HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+
+            modelBuilder.Entity<Order>()
+                .HasMany(o => o.Products)
+                .WithOptional(p => p.Order)
+                .WillCascadeOnDelete(true);
         }
 
         public DbSet<Order> Orders { get; set; }

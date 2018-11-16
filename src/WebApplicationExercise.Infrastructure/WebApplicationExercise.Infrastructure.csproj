@@ -54,6 +54,15 @@
     <Compile Include="Data\MainDataContext.cs" />
     <Compile Include="Data\OrdersRepository.cs" />
     <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Migrations\201811141221168_InitialCreate.cs" />
+    <Compile Include="Migrations\201811141221168_InitialCreate.Designer.cs">
+      <DependentUpon>201811141221168_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811161024371_ProductOrderNavProperty.cs" />
+    <Compile Include="Migrations\201811161024371_ProductOrderNavProperty.Designer.cs">
+      <DependentUpon>201811161024371_ProductOrderNavProperty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -65,6 +74,14 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201811141221168_InitialCreate.resx">
+      <DependentUpon>201811141221168_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811161024371_ProductOrderNavProperty.resx">
+      <DependentUpon>201811161024371_ProductOrderNavProperty.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

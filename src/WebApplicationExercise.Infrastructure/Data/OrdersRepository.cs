@@ -103,8 +103,7 @@ namespace WebApplicationExercise.Infrastructure.Data
                 return null;
             }
 
-            _dataContext.Products.RemoveRange(order.Products);
-            _dataContext.Orders.Remove(order);
+            _dataContext.Set<Order>().Remove(order);
 
             await _dataContext.SaveChangesAsync();
 
