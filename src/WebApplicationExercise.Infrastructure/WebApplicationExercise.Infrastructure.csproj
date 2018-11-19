@@ -66,6 +66,10 @@
     <Compile Include="Migrations\201811161229346_OrderFieldRequired.Designer.cs">
       <DependentUpon>201811161229346_OrderFieldRequired.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201811190928548_DateTimeOffsetUse.cs" />
+    <Compile Include="Migrations\201811190928548_DateTimeOffsetUse.Designer.cs">
+      <DependentUpon>201811190928548_DateTimeOffsetUse.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -88,6 +92,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201811161229346_OrderFieldRequired.resx">
       <DependentUpon>201811161229346_OrderFieldRequired.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811190928548_DateTimeOffsetUse.resx">
+      <DependentUpon>201811190928548_DateTimeOffsetUse.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

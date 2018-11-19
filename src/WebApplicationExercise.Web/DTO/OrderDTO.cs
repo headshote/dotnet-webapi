@@ -12,7 +12,7 @@ namespace WebApplicationExercise.Web.DTO
         /// <summary>
         /// Date of the order creation
         /// </summary>
-        public DateTime CreatedDate { get; set; }
+        public DateTimeOffset CreatedDate { get; set; }
 
         /// <summary>
         /// Customer's name
