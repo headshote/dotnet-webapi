@@ -36,10 +36,10 @@ namespace WebApplicationExercise.Web.Controllers
 
         // GET: api/Orders/5
         /// <summary>
-        /// Returns an Order.
+        /// Returns an Order with UTC creation date, by its id.
         /// </summary>
         /// <param name="id">Guid of the order</param>
-        /// <returns>An Order, which mathecs the id</returns>
+        /// <returns>An Order, which mathecs the id, with UTC creation date</returns>
         [HttpGet]
         [ResponseType(typeof(OrderDTO))]
         public async Task<IHttpActionResult> GetOrder(Guid id)
@@ -56,11 +56,11 @@ namespace WebApplicationExercise.Web.Controllers
 
         // GET: api/Orders
         /// <summary>
-        /// Returns a list of Orders, which match the filtering criteria.
+        /// Returns a list of Orders with UTC creation dates, which match the filtering criteria.
         /// </summary>
-        /// <param name="from">A date, starting from which, orders to be returned</param>
-        /// <param name="to">A date, up to which, orders to be returned</param>
-        /// <param name="customerName">Name of the customer n the order</param>
+        /// <param name="from">A UTC date, starting from which, orders to be returned</param>
+        /// <param name="to">A UTC date, up to which, orders to be returned</param>
+        /// <param name="customerName">Name of the customer in the order</param>
         /// <returns>a list of Orders, which match the filtering criteria</returns>
         [HttpGet]
         [ResponseType(typeof(List<OrderDTO>))]
@@ -95,7 +95,7 @@ namespace WebApplicationExercise.Web.Controllers
         ///     }
         ///
         /// </remarks>
-        /// <param name="order">Order object</param>
+        /// <param name="order">Order object, CreatedDate is in your local time</param>
         /// <returns>A newly created Order</returns>
         /// <response code="201">Returns the newly created order</response>
         /// <response code="400">Bad request if input model is invalid</response>
@@ -135,7 +135,7 @@ namespace WebApplicationExercise.Web.Controllers
         ///
         /// </remarks>
         /// <param name="id">id of the Order object to modify</param>
-        /// <param name="order">Order object</param>
+        /// <param name="order">Order object, CreatedDate is in your local time</param>
         /// <response code="205">No content upon succesful Order update</response>
         /// <response code="404">If the order doen's exist</response>
         /// <response code="400">Bad request if input model is not valid</response>

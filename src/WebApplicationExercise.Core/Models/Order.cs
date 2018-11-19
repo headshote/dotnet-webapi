@@ -13,7 +13,7 @@ namespace WebApplicationExercise.Core.Models
         /// <summary>
         /// Date of the order creation
         /// </summary>
-        public DateTimeOffset CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; }
 
         /// <summary>
         /// Customer's name

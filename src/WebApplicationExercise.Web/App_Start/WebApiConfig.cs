@@ -47,10 +47,14 @@ namespace WebApplicationExercise.Web
                 cfg.AllowNullCollections = true;
                 cfg.AllowNullDestinationValues = true;
                 cfg.CreateMap<Order, OrderDTO>()
-                    .ForMember(dest => dest.Products, opt => opt.AllowNull());
-                cfg.CreateMap<Product, ProductDTO>();
-                    //.ForMember(dest => dest.Id, opts => opts.Ignore())
-                    //.ForMember(dest => dest.Name, opts => opts.MapFrom(src => src.Name));
+                    .ForMember(dest => dest.Products, opt => opt.AllowNull())
+                    .ForMember(dest => dest.CreatedDate, opts => opts.MapFrom(src => new DateTimeOffset(src.CreatedDate, TimeSpan.Zero)))
+                    .ReverseMap()
+                    .ForMember(dest => dest.Products, opt => opt.AllowNull())
+                    .ForMember(dest => dest.CreatedDate, opts => opts.MapFrom(src => src.CreatedDate.UtcDateTime));
+                cfg.CreateMap<Product, ProductDTO>()
+                    .ReverseMap()
+                    .ForMember(dest => dest.Order, opts => opts.Ignore());
             });
 
             // Web API routes
