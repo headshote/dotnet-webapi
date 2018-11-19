@@ -5,6 +5,7 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
+using RefactorThis.GraphDiff;
 using WebApplicationExercise.Core.Interfaces;
 using WebApplicationExercise.Core.Models;
 
@@ -59,25 +60,8 @@ namespace WebApplicationExercise.Infrastructure.Data
 
         public async Task<bool> Update(Order order)
         {
-            Guid id = order.Id;
-
-            Order orderFromDb = await _dataContext.Orders
-                .Where(o => o.Id == id)
-                .Include(p => p.Products)
-                .FirstOrDefaultAsync();
-
-            if (orderFromDb == null)
-            {
-                return false;
-            }
-
-            _dataContext.Entry(orderFromDb).CurrentValues.SetValues(order);
-            if (order.Products != null)
-            {
-                _dataContext.Products.RemoveRange(orderFromDb.Products);
-                orderFromDb.Products.AddRange(order.Products);
-            }
-            _dataContext.Set<Order>().AddOrUpdate(orderFromDb);
+            _dataContext.UpdateGraph<Order>(order,
+                map => map.OwnedCollection(x => x.Products));
 
             await _dataContext.SaveChangesAsync();
 
