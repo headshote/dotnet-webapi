@@ -13,17 +13,9 @@ namespace WebApplicationExercise.Web.Filters
 
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
-            var dates = new Dictionary<String, DateTime>();
-            actionContext.ActionArguments.ForEach(a =>
-            {
-                if (a.Value is DateTime)
-                {
-                    dates[a.Key] = DateTime.SpecifyKind((DateTime)a.Value, DateTimeKind.Utc);
-                }
-            });
+            var dates = actionContext.ActionArguments.Where(a => a.Value is DateTime).ToList();
 
-
-            dates.ForEach(a => actionContext.ActionArguments[a.Key] = a.Value);
+            dates.ForEach(a => actionContext.ActionArguments[a.Key] = DateTime.SpecifyKind((DateTime)a.Value, DateTimeKind.Utc));
         }
     }
 }
