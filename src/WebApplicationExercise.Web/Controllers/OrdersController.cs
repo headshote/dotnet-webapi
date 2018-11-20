@@ -64,6 +64,7 @@ namespace WebApplicationExercise.Web.Controllers
         /// <returns>a list of Orders, which match the filtering criteria</returns>
         [HttpGet]
         [ResponseType(typeof(List<OrderDTO>))]
+        [InputDateToUtcConversionFilter]
         public async Task<IHttpActionResult> GetOrders(DateTime? from = null, DateTime? to = null, string customerName = null)
         {
             var ordersList = await _ordersRepository.List(from, to, customerName);
