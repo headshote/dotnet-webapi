@@ -24,17 +24,11 @@ namespace WebApplicationExercise.Web
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
-            config.AddApiVersioning(o =>
-            {
-                o.AssumeDefaultVersionWhenUnspecified = true;
-                o.DefaultApiVersion = new ApiVersion(1, 0);
-                o.ReportApiVersions = true;
-                o.ErrorResponses = new VersioningErrorResponseProvider();
-            });
-
             log4net.Config.XmlConfigurator.Configure();
 
             var container = new UnityContainer();
+            config.DependencyResolver = new UnityResolver(container);
+
             var providers = config.Services.GetFilterProviders().ToList();
             config.Services.Add(typeof(IFilterProvider), new UnityFilterProvider(container));
             var defaultprovider = providers.Single(i => i is ActionDescriptorFilterProvider);
@@ -43,7 +37,7 @@ namespace WebApplicationExercise.Web
             container.RegisterType<ILogger, Logger>(new HierarchicalLifetimeManager());
             container.RegisterType<IOrdersRepository, OrdersRepository>(new HierarchicalLifetimeManager());
             container.RegisterType<MainDataContext, MainDataContext>(new HierarchicalLifetimeManager());
-            config.DependencyResolver = new UnityResolver(container);
+            container.RegisterType<IErrorManager, ErrorManager>();
 
             Mapper.Initialize(cfg =>
             {
@@ -60,7 +54,15 @@ namespace WebApplicationExercise.Web
                     .ForMember(dest => dest.Order, opts => opts.Ignore());
             });
 
-            config.Services.Replace(typeof(IExceptionHandler), new GlobalExceptionHandler(config.Services.GetExceptionHandler()));
+            config.Services.Replace(typeof(IExceptionHandler), new GlobalExceptionHandler(config.DependencyResolver.GetService(typeof(IErrorManager)) as IErrorManager));
+
+            config.AddApiVersioning(o =>
+            {
+                o.AssumeDefaultVersionWhenUnspecified = true;
+                o.DefaultApiVersion = new ApiVersion(1, 0);
+                o.ReportApiVersions = true;
+                o.ErrorResponses = new VersioningErrorResponseProvider(config.DependencyResolver.GetService(typeof(IErrorManager)) as IErrorManager);
+            });
 
             // Web API routes
             config.MapHttpAttributeRoutes();
