@@ -25,6 +25,7 @@ namespace WebApplicationExercise.Infrastructure.Errors
 
         public override void Handle(ExceptionHandlerContext context)
         {
+            _errorManager.LogErrorDetails(context);
             context.Result = _errorManager.CreateErrorAction(context);
         }
     }

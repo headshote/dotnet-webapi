@@ -17,7 +17,6 @@ namespace WebApplicationExercise.Web.Filters
         public override void OnException(HttpActionExecutedContext context)
         {
             ErrorManager.LogErrorDetails(context);
-
             context.Response = ErrorManager.CreateErrorMessage(context);
         }
     }

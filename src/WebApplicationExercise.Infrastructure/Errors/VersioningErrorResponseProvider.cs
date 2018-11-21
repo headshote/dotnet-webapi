@@ -16,20 +16,7 @@ namespace WebApplicationExercise.Infrastructure.Errors
 
         public override HttpResponseMessage CreateResponse(ErrorResponseContext context)
         {
-            switch (context.ErrorCode)
-            {
-                case "UnsupportedApiVersion":
-                    context = new ErrorResponseContext(
-                        context.Request,
-                        context.StatusCode,
-                        context.ErrorCode,
-                        context.Message,
-                        context.MessageDetail);
-                    break;
-            }
-
             return _errorManager.CreateErrorMessage(context);
-            
         }
     }
 }

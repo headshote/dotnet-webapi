@@ -4,7 +4,6 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -59,18 +58,15 @@ namespace WebApplicationExercise.Infrastructure.Errors
 
         public HttpResponseMessage CreateErrorMessage(HttpActionExecutedContext actionContext)
         {
-            return new HttpResponseMessage(HttpStatusCode.InternalServerError)
-            {
-                Content = new StringContent("An error occurred, please try again or contact the administrator.")
-            };
+            return actionContext.Request.CreateErrorResponse(actionContext.Response?.StatusCode ?? HttpStatusCode.InternalServerError, createErrorContent(actionContext));
         }
 
-        public void LogErrorDetails(ErrorResponseContext errorContext)
+        public void LogErrorDetails(ExceptionHandlerContext errorContext)
         {
-            ThreadPool.QueueUserWorkItem(task => _logger.Information("Error {0}\noccured,message: '{1}'\nDetails: '{2}'\n Requestdata: {3}",
-                errorContext.ErrorCode,
-                errorContext.Message,
-                errorContext.MessageDetail,
+            ThreadPool.QueueUserWorkItem(task => _logger.Information("Exception\n{0}\noccured during the method '{1}' of the controller '{2}'. Requestdata:\n{3}",
+                errorContext.Exception,
+                errorContext.ExceptionContext.ActionContext.ActionDescriptor.ActionName,
+                errorContext.ExceptionContext.ActionContext.ActionDescriptor.ControllerDescriptor.ControllerName,
                 errorContext.Request));
         }
 
@@ -80,7 +76,7 @@ namespace WebApplicationExercise.Infrastructure.Errors
             var methodName = actionContext.ActionContext.ActionDescriptor.ActionName;
             var request = actionContext.Request;
 
-            ThreadPool.QueueUserWorkItem(task => _logger.Information("Exception {0}\noccured int the method '{1}' of the controller '{2}'. Requestdata: {3}",
+            ThreadPool.QueueUserWorkItem(task => _logger.Information("Exception\n{0}\noccured during the method '{1}' of the controller '{2}'. Requestdata:\n{3}",
                 actionContext.Exception,
                 methodName,
                 controlleName,
@@ -89,14 +85,14 @@ namespace WebApplicationExercise.Infrastructure.Errors
 
         private HttpError createErrorContent(HttpActionExecutedContext context)
         {
-            return null;
+            var error = new HttpError();
+            var root = new HttpError() { ["Error"] = error };
+            error.Message = "An error occurred, please try again or contact the administrator.";
+            return root;
         }
 
         private HttpError createErrorContent(ErrorResponseContext context)
         {
-            Contract.Ensures(Contract.Result<HttpError>() != null);
-            Contract.Requires(context != null);
-
             var error = new HttpError();
             var root = new HttpError() { ["Error"] = error };
 
