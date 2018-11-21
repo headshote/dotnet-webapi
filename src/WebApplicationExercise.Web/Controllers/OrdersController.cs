@@ -15,6 +15,7 @@ using AutoMapper;
 using Microsoft.Web.Http;
 using WebApplicationExercise.Core.Interfaces;
 using WebApplicationExercise.Core.Models;
+using WebApplicationExercise.Infrastructure.Errors;
 using WebApplicationExercise.Web.DTO;
 using WebApplicationExercise.Web.Filters;
 
@@ -28,12 +29,15 @@ namespace WebApplicationExercise.Web.Controllers
     {
         private readonly ICustomerManager _customerManager;
         private readonly IOrdersRepository _ordersRepository;
+        private readonly IErrorManager _errorManager;
 
         public OrdersController(ICustomerManager customerManager,
-            IOrdersRepository ordersRepository)
+            IOrdersRepository ordersRepository,
+            IErrorManager errorManager)
         {
             _customerManager = customerManager;
             _ordersRepository = ordersRepository;
+            _errorManager = errorManager;
         }
 
         // GET: api/Orders/5
@@ -50,7 +54,7 @@ namespace WebApplicationExercise.Web.Controllers
 
             if (order == null)
             {
-                return NotFound();
+                return await _errorManager.ConverErrorActionToInternalFormat(NotFound());
             }
 
             return Ok(Mapper.Map<OrderDTO>(order));
@@ -108,7 +112,7 @@ namespace WebApplicationExercise.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return await _errorManager.ConverErrorActionToInternalFormat(BadRequest(ModelState));
             }
 
             return Ok(Mapper.Map<OrderDTO>(await _ordersRepository.Add(Mapper.Map<Order>(order))));
@@ -147,17 +151,17 @@ namespace WebApplicationExercise.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return await _errorManager.ConverErrorActionToInternalFormat(BadRequest(ModelState));
             }
 
             if (id != order.Id)
             {
-                return BadRequest();
+                return await _errorManager.ConverErrorActionToInternalFormat(BadRequest());
             }
 
             if (!await _ordersRepository.Update(Mapper.Map<Order>(order)))
             {
-                return NotFound();
+                return await _errorManager.ConverErrorActionToInternalFormat(NotFound());
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -184,7 +188,7 @@ namespace WebApplicationExercise.Web.Controllers
             var order = await _ordersRepository.Delete(id);
             if (order == null)
             {
-                return NotFound();
+                return await _errorManager.ConverErrorActionToInternalFormat(NotFound());
             }
 
             return Ok(Mapper.Map<OrderDTO>(order));

@@ -33,14 +33,14 @@ namespace WebApplicationExercise.Infrastructure.Errors
         {
             var resultOriginal = await original.ExecuteAsync(new CancellationToken());
 
-            ErrorActionResult result = new ErrorActionResult(resultOriginal);
+            ErrorActionResult result = new ErrorActionResult(resultOriginal, extraErrorMessage);
 
             return result;
         }
 
         public IHttpActionResult CreateErrorAction(ExceptionHandlerContext errorContext)
         {
-            var content = errorContext.Request.CreateErrorResponse(HttpStatusCode.InternalServerError, new HttpError()
+            var response = errorContext.Request.CreateErrorResponse(HttpStatusCode.InternalServerError, new HttpError()
             {
                 ["Error"] = new HttpError()
                 {
@@ -48,7 +48,7 @@ namespace WebApplicationExercise.Infrastructure.Errors
                 }
             });
 
-            return new ErrorActionResult(content);
+            return new ErrorActionResult(response);
         }
 
         public HttpResponseMessage CreateErrorMessage(ErrorResponseContext errorContext)
@@ -63,10 +63,8 @@ namespace WebApplicationExercise.Infrastructure.Errors
 
         public void LogErrorDetails(ExceptionHandlerContext errorContext)
         {
-            ThreadPool.QueueUserWorkItem(task => _logger.Information("Exception\n{0}\noccured during the method '{1}' of the controller '{2}'. Requestdata:\n{3}",
+            ThreadPool.QueueUserWorkItem(task => _logger.Information("Unhadled Exception occured\n{0}\nRequestdata:\n{1}",
                 errorContext.Exception,
-                errorContext.ExceptionContext.ActionContext.ActionDescriptor.ActionName,
-                errorContext.ExceptionContext.ActionContext.ActionDescriptor.ControllerDescriptor.ControllerName,
                 errorContext.Request));
         }
 
