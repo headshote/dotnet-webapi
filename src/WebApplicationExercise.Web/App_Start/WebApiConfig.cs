@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.ExceptionHandling;
 using System.Web.Http.Filters;
 using AutoMapper;
 using Microsoft.Web.Http;
@@ -11,6 +12,7 @@ using WebApplicationExercise.Core.Interfaces;
 using WebApplicationExercise.Core.Managers;
 using WebApplicationExercise.Core.Models;
 using WebApplicationExercise.Infrastructure.Data;
+using WebApplicationExercise.Infrastructure.Errors;
 using WebApplicationExercise.Infrastructure.Logging;
 using WebApplicationExercise.Web.DTO;
 using WebApplicationExercise.Web.Resolver;
@@ -27,6 +29,7 @@ namespace WebApplicationExercise.Web
                 o.AssumeDefaultVersionWhenUnspecified = true;
                 o.DefaultApiVersion = new ApiVersion(1, 0);
                 o.ReportApiVersions = true;
+                o.ErrorResponses = new VersioningErrorResponseProvider();
             });
 
             log4net.Config.XmlConfigurator.Configure();
@@ -56,6 +59,8 @@ namespace WebApplicationExercise.Web
                     .ReverseMap()
                     .ForMember(dest => dest.Order, opts => opts.Ignore());
             });
+
+            config.Services.Replace(typeof(IExceptionHandler), new GlobalExceptionHandler(config.Services.GetExceptionHandler()));
 
             // Web API routes
             config.MapHttpAttributeRoutes();
