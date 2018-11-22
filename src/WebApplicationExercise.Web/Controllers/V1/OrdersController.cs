@@ -106,7 +106,7 @@ namespace WebApplicationExercise.Web.Controllers.V1
         {
             if (!ModelState.IsValid)
             {
-                return _errorManager.ConvertErrorActionToInternalFormat(BadRequest(ModelState));
+                return BadRequest(ModelState);
             }
 
             return Ok(Mapper.Map<OrderDTO>(await _ordersRepository.Add(Mapper.Map<Order>(order))));
@@ -145,12 +145,12 @@ namespace WebApplicationExercise.Web.Controllers.V1
         {
             if (!ModelState.IsValid)
             {
-                return _errorManager.ConvertErrorActionToInternalFormat(BadRequest(ModelState));
+                return BadRequest(ModelState);
             }
 
             if (id != order.Id)
             {
-                return _errorManager.ConvertErrorActionToInternalFormat(BadRequest());
+                return _errorManager.ConvertErrorActionToInternalFormat(BadRequest(), "Request id '{0}' is different from model id '{1}'", id, order.Id);
             }
 
             if (!await _ordersRepository.Update(Mapper.Map<Order>(order)))
