@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Http;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Data.Entity.Migrations;
 using System.Net;
-using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Http;
 using System.Web.Http.Description;
 using AutoMapper;
 using Microsoft.Web.Http;
@@ -19,12 +13,12 @@ using WebApplicationExercise.Infrastructure.Errors;
 using WebApplicationExercise.Web.DTO;
 using WebApplicationExercise.Web.Filters;
 
-namespace WebApplicationExercise.Web.Controllers
+namespace WebApplicationExercise.Web.Controllers.V1
 {
     [ApiVersion("1.0")]
     [RoutePrefix("api/orders")]
     [LoggingExecutionTimeFilter]
-    [ControllerExceptionFilterAttribute]
+    [ControllerExceptionFilter]
     public class OrdersController : ApiController
     {
         private readonly ICustomerManager _customerManager;
