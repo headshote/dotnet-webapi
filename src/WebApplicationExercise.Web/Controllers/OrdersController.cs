@@ -54,7 +54,7 @@ namespace WebApplicationExercise.Web.Controllers
 
             if (order == null)
             {
-                return await _errorManager.ConverErrorActionToInternalFormat(NotFound());
+                return _errorManager.ConverErrorActionToInternalFormat(NotFound(), "Order with id {0} not found", id);
             }
 
             return Ok(Mapper.Map<OrderDTO>(order));
@@ -112,7 +112,7 @@ namespace WebApplicationExercise.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return await _errorManager.ConverErrorActionToInternalFormat(BadRequest(ModelState));
+                return _errorManager.ConverErrorActionToInternalFormat(BadRequest(ModelState));
             }
 
             return Ok(Mapper.Map<OrderDTO>(await _ordersRepository.Add(Mapper.Map<Order>(order))));
@@ -151,17 +151,17 @@ namespace WebApplicationExercise.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return await _errorManager.ConverErrorActionToInternalFormat(BadRequest(ModelState));
+                return _errorManager.ConverErrorActionToInternalFormat(BadRequest(ModelState));
             }
 
             if (id != order.Id)
             {
-                return await _errorManager.ConverErrorActionToInternalFormat(BadRequest());
+                return _errorManager.ConverErrorActionToInternalFormat(BadRequest());
             }
 
             if (!await _ordersRepository.Update(Mapper.Map<Order>(order)))
             {
-                return await _errorManager.ConverErrorActionToInternalFormat(NotFound());
+                return _errorManager.ConverErrorActionToInternalFormat(NotFound(), "Order with id {0} not found", id);
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -188,7 +188,7 @@ namespace WebApplicationExercise.Web.Controllers
             var order = await _ordersRepository.Delete(id);
             if (order == null)
             {
-                return await _errorManager.ConverErrorActionToInternalFormat(NotFound());
+                return _errorManager.ConverErrorActionToInternalFormat(NotFound(), "Order with id {0} not found", id);
             }
 
             return Ok(Mapper.Map<OrderDTO>(order));

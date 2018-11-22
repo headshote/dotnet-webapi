@@ -24,41 +24,39 @@ namespace WebApplicationExercise.Infrastructure.Errors
             _logger = logger;
         }
 
-        public async Task<IHttpActionResult> ConverErrorActionToInternalFormat(IHttpActionResult original)
+        public IHttpActionResult ConverErrorActionToInternalFormat(IHttpActionResult original)
         {
-            return await ConverErrorActionToInternalFormat(original, null);
+            return ConverErrorActionToInternalFormat(original, null);
         }
 
-        public async Task<IHttpActionResult> ConverErrorActionToInternalFormat(IHttpActionResult original, string extraErrorMessage)
+        public IHttpActionResult ConverErrorActionToInternalFormat(IHttpActionResult original, string extraErrorMessage)
         {
-            var resultOriginal = await original.ExecuteAsync(new CancellationToken());
+            var resultOriginal = original.ExecuteAsync(new CancellationToken()).Result;
 
-            ErrorActionResult result = new ErrorActionResult(resultOriginal, extraErrorMessage);
+            return new ErrorActionResult(resultOriginal, extraErrorMessage);
+        }
 
-            return result;
+        public IHttpActionResult ConverErrorActionToInternalFormat(IHttpActionResult original, string fmt, params object[] vars)
+        {
+            return ConverErrorActionToInternalFormat(original, string.Format(fmt, vars));
         }
 
         public IHttpActionResult CreateErrorAction(ExceptionHandlerContext errorContext)
         {
-            var response = errorContext.Request.CreateErrorResponse(HttpStatusCode.InternalServerError, new HttpError()
-            {
-                ["Error"] = new HttpError()
-                {
-                    Message = errorContext.ExceptionContext.Exception.Message
-                }
-            });
+            var response = errorContext.Request.CreateErrorResponse(HttpStatusCode.InternalServerError, HttpErrorFormatGenerator.CreateError(errorContext));
 
             return new ErrorActionResult(response);
         }
 
         public HttpResponseMessage CreateErrorMessage(ErrorResponseContext errorContext)
         {
-            return errorContext.Request.CreateErrorResponse(errorContext.StatusCode, createErrorContent(errorContext));
+            return errorContext.Request.CreateErrorResponse(errorContext.StatusCode, HttpErrorFormatGenerator.CreateError(errorContext));
         }
 
         public HttpResponseMessage CreateErrorMessage(HttpActionExecutedContext actionContext)
         {
-            return actionContext.Request.CreateErrorResponse(actionContext.Response?.StatusCode ?? HttpStatusCode.InternalServerError, createErrorContent(actionContext));
+            return actionContext.Request.CreateErrorResponse(actionContext.Response?.StatusCode ?? HttpStatusCode.InternalServerError,
+                HttpErrorFormatGenerator.CreateError(actionContext));
         }
 
         public void LogErrorDetails(ExceptionHandlerContext errorContext)
@@ -79,37 +77,6 @@ namespace WebApplicationExercise.Infrastructure.Errors
                 methodName,
                 controlleName,
                 request));
-        }
-
-        private HttpError createErrorContent(HttpActionExecutedContext context)
-        {
-            var error = new HttpError();
-            var root = new HttpError() { ["Error"] = error };
-            error.Message = "An error occurred, please try again or contact the administrator.";
-            return root;
-        }
-
-        private HttpError createErrorContent(ErrorResponseContext context)
-        {
-            var error = new HttpError();
-            var root = new HttpError() { ["Error"] = error };
-
-            if (!string.IsNullOrEmpty(context.ErrorCode))
-            {
-                error["Code"] = context.ErrorCode;
-            }
-
-            if (!string.IsNullOrEmpty(context.Message))
-            {
-                error.Message = context.Message;
-            }
-
-            if (!string.IsNullOrEmpty(context.MessageDetail) && context.Request.ShouldIncludeErrorDetail() == true)
-            {
-                error["ErrorDetail"] = new HttpError(context.MessageDetail);
-            }
-
-            return root;
         }
     }
 }

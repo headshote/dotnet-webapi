@@ -76,6 +76,7 @@
     <Compile Include="Errors\GlobalExceptionHandler.cs" />
     <Compile Include="Errors\IErrorManager.cs" />
     <Compile Include="Errors\Results\ErrorActionResult.cs" />
+    <Compile Include="Errors\Results\HttpErrorFormatGenerator.cs" />
     <Compile Include="Errors\VersioningErrorResponseProvider.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Migrations\201811141221168_InitialCreate.cs" />

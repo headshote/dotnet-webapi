@@ -16,19 +16,8 @@ namespace WebApplicationExercise.Infrastructure.Errors.Results
         {
             Response = response;
 
-            var newContent = new HttpError()
-            {
-                ["Error"] = Response.Content != null ? 
-                    Response.Content.ReadAsAsync<HttpError>().Result : new HttpError()
-            };
-            HttpError innerError = newContent["Error"] as HttpError;
-
-            if (!string.IsNullOrEmpty(extraMessage))
-            {
-                innerError["ErrorDetail"] = extraMessage;
-            }
-
-            Response.Content = new ObjectContent<HttpError>(newContent, new JsonMediaTypeFormatter());
+            Response.Content = new ObjectContent<HttpError>(HttpErrorFormatGenerator.CreateError(response.Content, extraMessage), 
+                new JsonMediaTypeFormatter());
         }
 
         public Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
