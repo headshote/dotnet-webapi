@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -24,21 +25,26 @@ namespace WebApplicationExercise.Infrastructure.Errors
             _logger = logger;
         }
 
-        public IHttpActionResult ConverErrorActionToInternalFormat(IHttpActionResult original)
+        public IHttpActionResult ConvertErrorActionToInternalFormat(IHttpActionResult original)
         {
-            return ConverErrorActionToInternalFormat(original, null);
+            return ConvertErrorActionToInternalFormat(original, null);
         }
 
-        public IHttpActionResult ConverErrorActionToInternalFormat(IHttpActionResult original, string extraErrorMessage)
+        public IHttpActionResult ConvertErrorActionToInternalFormat(IHttpActionResult original, string fmt, params object[] vars)
+        {
+            return ConvertErrorActionToInternalFormat(original, string.Format(fmt, vars));
+        }
+
+        public IHttpActionResult ConvertErrorActionToInternalFormat(IHttpActionResult original, string extraErrorMessage)
         {
             var resultOriginal = original.ExecuteAsync(new CancellationToken()).Result;
 
-            return new ErrorActionResult(resultOriginal, extraErrorMessage);
+            return new ErrorActionResult(resultOriginal, ConvertErrorContentToInternalFormat(resultOriginal.Content, extraErrorMessage));
         }
 
-        public IHttpActionResult ConverErrorActionToInternalFormat(IHttpActionResult original, string fmt, params object[] vars)
+        public HttpContent ConvertErrorContentToInternalFormat(HttpContent original, string extraMessage = null)
         {
-            return ConverErrorActionToInternalFormat(original, string.Format(fmt, vars));
+            return new ObjectContent<HttpError>(HttpErrorFormatGenerator.CreateError(original, extraMessage), new JsonMediaTypeFormatter());
         }
 
         public IHttpActionResult CreateErrorAction(ExceptionHandlerContext errorContext)

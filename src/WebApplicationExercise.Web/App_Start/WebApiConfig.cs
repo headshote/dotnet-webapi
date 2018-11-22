@@ -28,7 +28,6 @@ namespace WebApplicationExercise.Web
 
             var container = new UnityContainer();
             config.DependencyResolver = new UnityResolver(container);
-
             var providers = config.Services.GetFilterProviders().ToList();
             config.Services.Add(typeof(IFilterProvider), new UnityFilterProvider(container));
             var defaultprovider = providers.Single(i => i is ActionDescriptorFilterProvider);
@@ -38,6 +37,8 @@ namespace WebApplicationExercise.Web
             container.RegisterType<IOrdersRepository, OrdersRepository>(new HierarchicalLifetimeManager());
             container.RegisterType<MainDataContext, MainDataContext>(new HierarchicalLifetimeManager());
             container.RegisterType<IErrorManager, ErrorManager>();
+
+            config.MessageHandlers.Add(new ErrorHandler(config.DependencyResolver.GetService(typeof(IErrorManager)) as IErrorManager));
 
             Mapper.Initialize(cfg =>
             {

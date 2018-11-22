@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Data\MainDataContext.cs" />
     <Compile Include="Data\OrdersRepository.cs" />
+    <Compile Include="Errors\ErrorHandler.cs" />
     <Compile Include="Errors\ErrorManager.cs" />
     <Compile Include="Errors\GlobalExceptionHandler.cs" />
     <Compile Include="Errors\IErrorManager.cs" />

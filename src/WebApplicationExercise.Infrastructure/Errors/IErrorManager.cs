@@ -11,9 +11,11 @@ namespace WebApplicationExercise.Infrastructure.Errors
 {
     public interface IErrorManager
     {
-        IHttpActionResult ConverErrorActionToInternalFormat(IHttpActionResult original);
-        IHttpActionResult ConverErrorActionToInternalFormat(IHttpActionResult original, string extraErrorMessage);
-        IHttpActionResult ConverErrorActionToInternalFormat(IHttpActionResult original, string fmt, params object[] vars);
+        IHttpActionResult ConvertErrorActionToInternalFormat(IHttpActionResult original);
+        IHttpActionResult ConvertErrorActionToInternalFormat(IHttpActionResult original, string fmt, params object[] vars);
+        IHttpActionResult ConvertErrorActionToInternalFormat(IHttpActionResult original, string extraErrorMessage);
+
+        HttpContent ConvertErrorContentToInternalFormat(HttpContent original, string extraMessage = null);
 
         IHttpActionResult CreateErrorAction(ExceptionHandlerContext errorContext);
 

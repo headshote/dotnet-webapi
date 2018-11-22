@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Net.Http;
-using System.Net.Http.Formatting;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -12,12 +11,14 @@ namespace WebApplicationExercise.Infrastructure.Errors.Results
     {
         public HttpResponseMessage Response { get; set; }
 
-        public ErrorActionResult(HttpResponseMessage response, string extraMessage=null)
+        public ErrorActionResult(HttpResponseMessage originalResponse, HttpContent newContent = null)
         {
-            Response = response;
+            Response = originalResponse;
 
-            Response.Content = new ObjectContent<HttpError>(HttpErrorFormatGenerator.CreateError(response.Content, extraMessage), 
-                new JsonMediaTypeFormatter());
+            if (newContent != null)
+            {
+                Response.Content = newContent;
+            }
         }
 
         public Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
