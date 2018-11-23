@@ -15,8 +15,8 @@ using WebApplicationExercise.Web.Filters;
 
 namespace WebApplicationExercise.Web.Controllers.V1
 {
-    [ApiVersion("1.0")]
-    [RoutePrefix("api/orders")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/orders/{id?}")]
     [LoggingExecutionTimeFilter]
     [ControllerExceptionFilter]
     public class OrdersController : ApiController

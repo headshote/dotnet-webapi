@@ -4,8 +4,11 @@ using System.Linq;
 using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
 using System.Web.Http.Filters;
+using System.Web.Http.Routing;
 using AutoMapper;
 using Microsoft.Web.Http;
+using Microsoft.Web.Http.Routing;
+using Microsoft.Web.Http.Versioning;
 using Unity;
 using Unity.Lifetime;
 using WebApplicationExercise.Core.Interfaces;
@@ -57,20 +60,27 @@ namespace WebApplicationExercise.Web
 
             config.Services.Replace(typeof(IExceptionHandler), new GlobalExceptionHandler(config.DependencyResolver.GetService(typeof(IErrorManager)) as IErrorManager));
 
+            // Web API routes
+            var constraintResolver = new DefaultInlineConstraintResolver()
+            {
+                ConstraintMap =
+                {
+                    ["apiVersion"] = typeof( ApiVersionRouteConstraint )
+                }
+            };
+            config.MapHttpAttributeRoutes(constraintResolver);
+
             config.AddApiVersioning(o =>
             {
-                o.AssumeDefaultVersionWhenUnspecified = true;
+                o.ApiVersionReader = new UrlSegmentApiVersionReader();
                 o.DefaultApiVersion = new ApiVersion(1, 0);
                 o.ReportApiVersions = true;
                 o.ErrorResponses = new VersioningErrorResponseProvider(config.DependencyResolver.GetService(typeof(IErrorManager)) as IErrorManager);
             });
 
-            // Web API routes
-            config.MapHttpAttributeRoutes();
-
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
+                routeTemplate: "api/v{version:apiVersion}/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
         }
