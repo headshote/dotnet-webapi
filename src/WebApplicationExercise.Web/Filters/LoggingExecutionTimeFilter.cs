@@ -16,7 +16,7 @@ namespace WebApplicationExercise.Web.Filters
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            actionContext.ActionArguments["stopwatch"] = stopwatch;
+            actionContext.Request.Properties["stopwatch"] = stopwatch;
 
             var controlleName = actionContext.ActionDescriptor.ControllerDescriptor.ControllerName;
             var methodName = actionContext.ActionDescriptor.ActionName;
@@ -25,7 +25,7 @@ namespace WebApplicationExercise.Web.Filters
 
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
-            if (!(actionExecutedContext.ActionContext.ActionArguments["stopwatch"] is Stopwatch stopwatch))
+            if (!(actionExecutedContext.ActionContext.Request.Properties["stopwatch"] is Stopwatch stopwatch))
             {
                 return;
             }
