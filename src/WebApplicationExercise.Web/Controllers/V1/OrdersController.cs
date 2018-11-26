@@ -71,9 +71,16 @@ namespace WebApplicationExercise.Web.Controllers.V1
             int? perPage = null,
             DateTime? from = null, 
             DateTime? to = null,
-            string customerName = null)
+            string customerName = null,
+            string sortField = null, 
+            string sortOrder = null)
         {
-            var ordersList = await _ordersRepository.List(page, perPage, from, to, customerName);
+            bool sortAscending = sortOrder?.ToLower() != "descending";
+
+            var ordersList = await _ordersRepository.List(page, perPage,
+                from, to,
+                customerName,
+                sortField, sortAscending);
 
             ordersList = ordersList.Where(o => _customerManager.IsCustomerVisible(o.Customer)).ToList();
 

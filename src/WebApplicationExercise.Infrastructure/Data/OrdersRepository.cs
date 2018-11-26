@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using RefactorThis.GraphDiff;
 using WebApplicationExercise.Core.Interfaces;
@@ -32,7 +33,12 @@ namespace WebApplicationExercise.Infrastructure.Data
             return _dataContext.Orders.AsNoTracking().Include(o => o.Products).FirstOrDefaultAsync(o => o.Id == id);
         }
 
-        public Task<List<Order>> List(int? page, int? perPage, DateTime? from = null, DateTime? to = null, string customerName = null)
+        public Task<List<Order>> List(int? page, 
+            int? perPage,
+            DateTime? from = null,
+            DateTime? to = null, 
+            string customerName = null,
+            string sortField = null, bool ascending = true)
         {
             var takePage = page ?? 1;
             var takeCount = perPage ?? DefaultPageRecordCount;
@@ -51,11 +57,24 @@ namespace WebApplicationExercise.Infrastructure.Data
                 orders = FilterByCustomer(orders, customerName);
             }
 
-            orders = orders.OrderBy(o => o.Id)
-                .Skip((takePage - 1) * takeCount)
+            orders = sortField != null ?
+                OrderByPropertyName(orders, sortField, ascending) : orders.OrderBy(o => o.Id);
+
+            orders = orders.Skip((takePage - 1) * takeCount)
                 .Take(takeCount);
 
             return orders.ToListAsync();
+        }
+
+        private IQueryable<Order> OrderByPropertyName(IQueryable<Order> q, string sortField, bool ascending)
+        {
+            var param = Expression.Parameter(typeof(Order), "p");
+            var prop = Expression.Property(param, sortField);
+            var exp = Expression.Lambda(prop, param);
+            string method = ascending ? "OrderBy" : "OrderByDescending";
+            Type[] types = new Type[] { q.ElementType, exp.Body.Type };
+            var rs = Expression.Call(typeof(Queryable), method, types, q.Expression, exp);
+            return q.Provider.CreateQuery<Order>(rs);
         }
 
         public async Task<Order> Add(Order order)
