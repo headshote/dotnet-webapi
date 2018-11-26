@@ -18,6 +18,8 @@ namespace WebApplicationExercise.Infrastructure.Data
         
         private bool _disposed = false;
 
+        private const int DefaultPageRecordCount = 25;
+
         public OrdersRepository(MainDataContext dbContext,
             ILogger logger)
         {
@@ -30,8 +32,11 @@ namespace WebApplicationExercise.Infrastructure.Data
             return _dataContext.Orders.AsNoTracking().Include(o => o.Products).FirstOrDefaultAsync(o => o.Id == id);
         }
 
-        public Task<List<Order>> List(DateTime? from = null, DateTime? to = null, string customerName = null)
+        public Task<List<Order>> List(int? page, int? perPage, DateTime? from = null, DateTime? to = null, string customerName = null)
         {
+            var takePage = page ?? 1;
+            var takeCount = perPage ?? DefaultPageRecordCount;
+
             var orders = _dataContext.Orders
                 .AsNoTracking()
                 .Include(o => o.Products);
@@ -45,6 +50,10 @@ namespace WebApplicationExercise.Infrastructure.Data
             {
                 orders = FilterByCustomer(orders, customerName);
             }
+
+            orders = orders.OrderBy(o => o.Id)
+                .Skip((takePage - 1) * takeCount)
+                .Take(takeCount);
 
             return orders.ToListAsync();
         }

@@ -66,9 +66,14 @@ namespace WebApplicationExercise.Web.Controllers.V1
         [HttpGet]
         [ResponseType(typeof(List<OrderDTO>))]
         [InputDateToUtcConversionFilter]
-        public async Task<IHttpActionResult> GetOrders(DateTime? from = null, DateTime? to = null, string customerName = null)
+        public async Task<IHttpActionResult> GetOrders(
+            int? page = null,
+            int? perPage = null,
+            DateTime? from = null, 
+            DateTime? to = null,
+            string customerName = null)
         {
-            var ordersList = await _ordersRepository.List(from, to, customerName);
+            var ordersList = await _ordersRepository.List(page, perPage, from, to, customerName);
 
             ordersList = ordersList.Where(o => _customerManager.IsCustomerVisible(o.Customer)).ToList();
 
