@@ -13,11 +13,21 @@ namespace WebApplicationExercise.Infrastructure.Errors.Results
 {
     public class HttpErrorFormatGenerator
     {
-        public static HttpError CreateError(HttpActionExecutedContext context)
+        public static HttpError CreateError()
         {
             return CreateOuterErrorObject(new HttpError()
             {
+                ["Type"] = "InternalServerError",
                 Message = "An error occurred, please try again or contact the administrator."
+            });
+        }
+
+        public static HttpError CreateError(string message, string errorType)
+        {
+            return CreateOuterErrorObject(new HttpError()
+            {
+                ["Type"] = errorType,
+                Message = message
             });
         }
 

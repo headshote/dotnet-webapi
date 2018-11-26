@@ -21,6 +21,7 @@ namespace WebApplicationExercise.Infrastructure.Errors
 
         HttpResponseMessage CreateErrorMessage(ErrorResponseContext errorContext);
         HttpResponseMessage CreateErrorMessage(HttpActionExecutedContext actionContext);
+        HttpResponseMessage CreateErrorMessage(HttpActionExecutedContext actionContext, HttpStatusCode errorCode, string errorMessage, string errorType);
 
         void LogErrorDetails(ExceptionHandlerContext errorContext);
         void LogErrorDetails(HttpActionExecutedContext actionContext);

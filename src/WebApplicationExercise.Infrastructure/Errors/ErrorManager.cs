@@ -61,8 +61,12 @@ namespace WebApplicationExercise.Infrastructure.Errors
 
         public HttpResponseMessage CreateErrorMessage(HttpActionExecutedContext actionContext)
         {
-            return actionContext.Request.CreateErrorResponse(actionContext.Response?.StatusCode ?? HttpStatusCode.InternalServerError,
-                HttpErrorFormatGenerator.CreateError(actionContext));
+            return actionContext.Request.CreateErrorResponse(HttpStatusCode.InternalServerError, HttpErrorFormatGenerator.CreateError());
+        }
+
+        public HttpResponseMessage CreateErrorMessage(HttpActionExecutedContext actionContext, HttpStatusCode errorCode, string errorMessage, string errorType)
+        {
+            return actionContext.Request.CreateErrorResponse(errorCode, HttpErrorFormatGenerator.CreateError(errorMessage, errorType));
         }
 
         public void LogErrorDetails(ExceptionHandlerContext errorContext)

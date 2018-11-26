@@ -10,6 +10,7 @@ using Microsoft.Web.Http;
 using WebApplicationExercise.Core.Interfaces;
 using WebApplicationExercise.Core.Models;
 using WebApplicationExercise.Infrastructure.Errors;
+using WebApplicationExercise.Infrastructure.Errors.Exceptions;
 using WebApplicationExercise.Web.DTO;
 using WebApplicationExercise.Web.Filters;
 
@@ -18,7 +19,7 @@ namespace WebApplicationExercise.Web.Controllers.V1
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/orders/{id?}")]
     [LoggingExecutionTimeFilter]
-    [ControllerExceptionFilter]
+    [ControllerExceptionFilter(typeof(BusinessException), HttpStatusCode.ExpectationFailed,"LogicalError")]
     public class OrdersController : ApiController
     {
         private readonly ICustomerManager _customerManager;

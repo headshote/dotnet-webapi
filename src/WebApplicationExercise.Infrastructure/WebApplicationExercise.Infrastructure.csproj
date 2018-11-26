@@ -74,6 +74,7 @@
     <Compile Include="Data\OrdersRepository.cs" />
     <Compile Include="Errors\ErrorHandler.cs" />
     <Compile Include="Errors\ErrorManager.cs" />
+    <Compile Include="Errors\Exceptions\BusinessException.cs" />
     <Compile Include="Errors\GlobalExceptionHandler.cs" />
     <Compile Include="Errors\IErrorManager.cs" />
     <Compile Include="Errors\Results\ErrorActionResult.cs" />
@@ -130,5 +131,6 @@
       <DependentUpon>201811191443101_StoringUtcDatetimeInDb.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
