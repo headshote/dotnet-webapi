@@ -54,6 +54,7 @@ namespace WebApplicationExercise.Web
                     .ForMember(dest => dest.Products, opt => opt.AllowNull())
                     .ForMember(dest => dest.CreatedDate, opts => opts.MapFrom(src => src.CreatedDate.UtcDateTime));
                 cfg.CreateMap<Product, ProductDTO>()
+                    .ForMember(dest => dest.Price, opts => opts.MapFrom(src => src.PriceUSD))
                     .ReverseMap()
                     .ForMember(dest => dest.Order, opts => opts.Ignore());
             });

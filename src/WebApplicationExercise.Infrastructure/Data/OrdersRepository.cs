@@ -75,7 +75,7 @@ namespace WebApplicationExercise.Infrastructure.Data
             {
                 prop = Expression.Property(param, sortField);
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
                 throw new BusinessException($"Field '{sortField}' doesn't exist in the Order object");
             }

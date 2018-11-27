@@ -101,6 +101,10 @@
     <Compile Include="Migrations\201811191443101_StoringUtcDatetimeInDb.Designer.cs">
       <DependentUpon>201811191443101_StoringUtcDatetimeInDb.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201811270908153_CurrencyFormat.cs" />
+    <Compile Include="Migrations\201811270908153_CurrencyFormat.Designer.cs">
+      <DependentUpon>201811270908153_CurrencyFormat.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -129,6 +133,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201811191443101_StoringUtcDatetimeInDb.resx">
       <DependentUpon>201811191443101_StoringUtcDatetimeInDb.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811270908153_CurrencyFormat.resx">
+      <DependentUpon>201811270908153_CurrencyFormat.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
