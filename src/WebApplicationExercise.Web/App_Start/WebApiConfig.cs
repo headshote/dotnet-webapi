@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
@@ -10,6 +11,7 @@ using Microsoft.Web.Http;
 using Microsoft.Web.Http.Routing;
 using Microsoft.Web.Http.Versioning;
 using Unity;
+using Unity.Injection;
 using Unity.Lifetime;
 using WebApplicationExercise.Core.Interfaces;
 using WebApplicationExercise.Core.Managers;
@@ -41,7 +43,8 @@ namespace WebApplicationExercise.Web
             container.RegisterType<IOrdersRepository, OrdersRepository>(new HierarchicalLifetimeManager());
             container.RegisterType<MainDataContext, MainDataContext>(new HierarchicalLifetimeManager());
             container.RegisterType<IErrorManager, ErrorManager>();
-            container.RegisterType<IExchangeRateProvider, ExchangeRateProvider>();
+            container.RegisterType<IExchangeRateProvider, ExchangeRateProvider>(new InjectionConstructor(
+                ConfigurationManager.AppSettings["exRateServiceAddress"]));
 
             config.MessageHandlers.Add(new ErrorHandler(config.DependencyResolver.GetService(typeof(IErrorManager)) as IErrorManager));
 

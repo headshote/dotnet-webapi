@@ -14,23 +14,27 @@ namespace WebApplicationExercise.Core.Services
 {
     public class ExchangeRateProvider : IExchangeRateProvider
     {
-        private HttpClient client;
+        private readonly string _serviceAddress;
 
-        public ExchangeRateProvider()
+        private HttpClient _client;
+
+        public ExchangeRateProvider(string serviceAddress)
         {
-            client = new HttpClient();
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _serviceAddress = serviceAddress;
+
+            _client = new HttpClient();
+            _client.DefaultRequestHeaders.Accept.Clear();
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         public async Task<decimal> GetExchangeRate(string from, string to)
         {
-            var requestUrl = $"https://free.currencyconverterapi.com/api/v6/convert?q={from}_{to}&compact=y";
+            var requestUrl = _serviceAddress + $"api/v6/convert?q={from}_{to}&compact=ultra";
 
             HttpResponseMessage response = null;
             try
             {
-                response = await client.GetAsync(requestUrl);
+                response = await _client.GetAsync(requestUrl);
             }
             catch (HttpRequestException e)
             {
@@ -46,7 +50,7 @@ namespace WebApplicationExercise.Core.Services
 
             try
             {
-                JToken val = content.First.First["val"];
+                JToken val = content[$"{from}_{to}"];
                 var exRate = (decimal)val;
 
                 return exRate;
