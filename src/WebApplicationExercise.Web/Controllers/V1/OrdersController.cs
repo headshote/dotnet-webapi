@@ -59,9 +59,13 @@ namespace WebApplicationExercise.Web.Controllers.V1
         /// <summary>
         /// Returns a list of Orders with UTC creation dates, which match the filtering criteria.
         /// </summary>
+        /// <param name="page">Page number to see</param>
+        /// <param name="perPage">Amount of oreders per page</param>
         /// <param name="from">A UTC date, starting from which, orders to be returned</param>
         /// <param name="to">A UTC date, up to which, orders to be returned</param>
         /// <param name="customerName">Name of the customer in the order</param>
+        /// <param name="sortField">Field of the order object to sort by</param>
+        /// <param name="sortOrder">Order of sorting - ascending, descending</param>
         /// <returns>a list of Orders, which match the filtering criteria</returns>
         [HttpGet]
         [ResponseType(typeof(List<OrderDTO>))]

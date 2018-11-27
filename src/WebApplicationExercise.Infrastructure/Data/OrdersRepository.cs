@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using RefactorThis.GraphDiff;
 using WebApplicationExercise.Core.Interfaces;
 using WebApplicationExercise.Core.Models;
+using WebApplicationExercise.Infrastructure.Errors.Exceptions;
 
 namespace WebApplicationExercise.Infrastructure.Data
 {
@@ -69,7 +70,16 @@ namespace WebApplicationExercise.Infrastructure.Data
         private IQueryable<Order> OrderByPropertyName(IQueryable<Order> q, string sortField, bool ascending)
         {
             var param = Expression.Parameter(typeof(Order), "p");
-            var prop = Expression.Property(param, sortField);
+            MemberExpression prop;
+            try
+            {
+                prop = Expression.Property(param, sortField);
+            }
+            catch (ArgumentException e)
+            {
+                throw new BusinessException($"Field '{sortField}' doesn't exist in the Order object");
+            }
+            
             var exp = Expression.Lambda(prop, param);
             string method = ascending ? "OrderBy" : "OrderByDescending";
             Type[] types = new Type[] { q.ElementType, exp.Body.Type };
