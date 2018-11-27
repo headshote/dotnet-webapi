@@ -22,17 +22,22 @@ namespace WebApplicationExercise.Web.Controllers.V1
     [ControllerExceptionFilter(typeof(BusinessException), HttpStatusCode.ExpectationFailed,"LogicalError")]
     public class OrdersController : ApiController
     {
+        private const string DefaultCurrency = "USD";
+
         private readonly ICustomerManager _customerManager;
         private readonly IOrdersRepository _ordersRepository;
         private readonly IErrorManager _errorManager;
+        private readonly IExchangeRateProvider _exchangeRateProvider;
 
         public OrdersController(ICustomerManager customerManager,
             IOrdersRepository ordersRepository,
-            IErrorManager errorManager)
+            IErrorManager errorManager,
+            IExchangeRateProvider exchangeRateProvider)
         {
             _customerManager = customerManager;
             _ordersRepository = ordersRepository;
             _errorManager = errorManager;
+            _exchangeRateProvider = exchangeRateProvider;
         }
 
         // GET: api/Orders/5
@@ -40,10 +45,11 @@ namespace WebApplicationExercise.Web.Controllers.V1
         /// Returns an Order with UTC creation date, by its id.
         /// </summary>
         /// <param name="id">Guid of the order</param>
+        /// <param name="currency">Currency to convert prices of products in the order to</param>
         /// <returns>An Order, which mathecs the id, with UTC creation date</returns>
         [HttpGet]
         [ResponseType(typeof(OrderDTO))]
-        public async Task<IHttpActionResult> GetOrder(Guid id)
+        public async Task<IHttpActionResult> GetOrder(Guid id, string currency = null)
         {
             var order = await _ordersRepository.GetById(id);
 
@@ -52,7 +58,14 @@ namespace WebApplicationExercise.Web.Controllers.V1
                 return _errorManager.ConvertErrorActionToInternalFormat(NotFound(), "Order with id {0} not found", id);
             }
 
-            return Ok(Mapper.Map<OrderDTO>(order));
+            var orderDto = Mapper.Map<OrderDTO>(order);
+            if (currency != null)
+            {
+                decimal exRate = _exchangeRateProvider.GetExchangeRate(DefaultCurrency, currency);
+                orderDto.ApplyExchangeRate(exRate);
+            }
+
+            return Ok(orderDto);
         }
 
         // GET: api/Orders
@@ -66,6 +79,7 @@ namespace WebApplicationExercise.Web.Controllers.V1
         /// <param name="customerName">Name of the customer in the order</param>
         /// <param name="sortField">Field of the order object to sort by</param>
         /// <param name="sortOrder">Order of sorting - ascending, descending</param>
+        /// <param name="currency">Currency to convert prices of products in the order to</param>
         /// <returns>a list of Orders, which match the filtering criteria</returns>
         [HttpGet]
         [ResponseType(typeof(List<OrderDTO>))]
@@ -77,7 +91,8 @@ namespace WebApplicationExercise.Web.Controllers.V1
             DateTime? to = null,
             string customerName = null,
             string sortField = null, 
-            string sortOrder = null)
+            string sortOrder = null, 
+            string currency = null)
         {
             bool sortAscending = sortOrder?.ToLower() != "descending";
 
@@ -88,7 +103,15 @@ namespace WebApplicationExercise.Web.Controllers.V1
 
             ordersList = ordersList.Where(o => _customerManager.IsCustomerVisible(o.Customer)).ToList();
 
-            return Ok(Mapper.Map<List<Order>, List<OrderDTO>>(ordersList));
+            var ordersDtoList = Mapper.Map<List<Order>, List<OrderDTO>>(ordersList);
+
+            if (currency != null)
+            {
+                decimal exRate = _exchangeRateProvider.GetExchangeRate(DefaultCurrency, currency);
+                ordersDtoList.ForEach(o => o.ApplyExchangeRate(exRate));
+            }
+
+            return Ok(ordersDtoList);
         }
 
         // POST: api/Orders/5

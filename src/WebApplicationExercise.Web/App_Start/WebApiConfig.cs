@@ -14,6 +14,7 @@ using Unity.Lifetime;
 using WebApplicationExercise.Core.Interfaces;
 using WebApplicationExercise.Core.Managers;
 using WebApplicationExercise.Core.Models;
+using WebApplicationExercise.Core.Services;
 using WebApplicationExercise.Infrastructure.Data;
 using WebApplicationExercise.Infrastructure.Errors;
 using WebApplicationExercise.Infrastructure.Logging;
@@ -40,6 +41,7 @@ namespace WebApplicationExercise.Web
             container.RegisterType<IOrdersRepository, OrdersRepository>(new HierarchicalLifetimeManager());
             container.RegisterType<MainDataContext, MainDataContext>(new HierarchicalLifetimeManager());
             container.RegisterType<IErrorManager, ErrorManager>();
+            container.RegisterType<IExchangeRateProvider, ExchangeRateProvider>();
 
             config.MessageHandlers.Add(new ErrorHandler(config.DependencyResolver.GetService(typeof(IErrorManager)) as IErrorManager));
 

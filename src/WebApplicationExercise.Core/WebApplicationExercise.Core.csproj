@@ -52,12 +52,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\ICustomerManager.cs" />
+    <Compile Include="Interfaces\IExchangeRateProvider.cs" />
     <Compile Include="Interfaces\ILogger.cs" />
     <Compile Include="Interfaces\IOrdersRepository.cs" />
     <Compile Include="Managers\CustomerManager.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ExchangeRateProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

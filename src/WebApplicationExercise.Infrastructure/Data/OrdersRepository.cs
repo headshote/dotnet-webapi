@@ -34,12 +34,8 @@ namespace WebApplicationExercise.Infrastructure.Data
             return _dataContext.Orders.AsNoTracking().Include(o => o.Products).FirstOrDefaultAsync(o => o.Id == id);
         }
 
-        public Task<List<Order>> List(int? page, 
-            int? perPage,
-            DateTime? from = null,
-            DateTime? to = null, 
-            string customerName = null,
-            string sortField = null, bool ascending = true)
+        public Task<List<Order>> List(int? page, int? perPage, DateTime? from = null, DateTime? to = null, 
+            string customerName = null, string sortField = null, bool ascending = true)
         {
             var takePage = page ?? 1;
             var takeCount = perPage ?? DefaultPageRecordCount;

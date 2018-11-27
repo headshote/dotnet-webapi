@@ -23,5 +23,10 @@ namespace WebApplicationExercise.Web.DTO
         /// List of products, purchase by the customer in this order
         /// </summary>
         public List<ProductDTO> Products { get; set; }
+
+        public void ApplyExchangeRate(decimal exRate)
+        {
+            Products.ForEach(p => p.Price = p.Price * exRate);
+        }
     }
 }
