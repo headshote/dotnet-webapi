@@ -7,7 +7,6 @@ using System.Web.Http.Results;
 using Unity.Attributes;
 using WebApplicationExercise.Core.Interfaces;
 using WebApplicationExercise.Infrastructure.Errors;
-using WebApplicationExercise.Infrastructure.Errors.Exceptions;
 using WebApplicationExercise.Infrastructure.Migrations;
 
 namespace WebApplicationExercise.Web.Filters

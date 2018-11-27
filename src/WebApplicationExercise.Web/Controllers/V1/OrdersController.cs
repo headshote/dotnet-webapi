@@ -7,10 +7,10 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using AutoMapper;
 using Microsoft.Web.Http;
+using WebApplicationExercise.Core.Exceptions;
 using WebApplicationExercise.Core.Interfaces;
 using WebApplicationExercise.Core.Models;
 using WebApplicationExercise.Infrastructure.Errors;
-using WebApplicationExercise.Infrastructure.Errors.Exceptions;
 using WebApplicationExercise.Web.DTO;
 using WebApplicationExercise.Web.Filters;
 
@@ -61,7 +61,7 @@ namespace WebApplicationExercise.Web.Controllers.V1
             var orderDto = Mapper.Map<OrderDTO>(order);
             if (currency != null)
             {
-                decimal exRate = _exchangeRateProvider.GetExchangeRate(DefaultCurrency, currency);
+                decimal exRate = await _exchangeRateProvider.GetExchangeRate(DefaultCurrency, currency);
                 orderDto.ApplyExchangeRate(exRate);
             }
 
@@ -107,7 +107,7 @@ namespace WebApplicationExercise.Web.Controllers.V1
 
             if (currency != null)
             {
-                decimal exRate = _exchangeRateProvider.GetExchangeRate(DefaultCurrency, currency);
+                decimal exRate = await _exchangeRateProvider.GetExchangeRate(DefaultCurrency, currency);
                 ordersDtoList.ForEach(o => o.ApplyExchangeRate(exRate));
             }
 

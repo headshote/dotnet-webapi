@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\BusinessException.cs" />
     <Compile Include="Interfaces\ICustomerManager.cs" />
     <Compile Include="Interfaces\IExchangeRateProvider.cs" />
     <Compile Include="Interfaces\ILogger.cs" />

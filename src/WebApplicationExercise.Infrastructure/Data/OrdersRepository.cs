@@ -7,9 +7,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using RefactorThis.GraphDiff;
+using WebApplicationExercise.Core.Exceptions;
 using WebApplicationExercise.Core.Interfaces;
 using WebApplicationExercise.Core.Models;
-using WebApplicationExercise.Infrastructure.Errors.Exceptions;
 
 namespace WebApplicationExercise.Infrastructure.Data
 {
